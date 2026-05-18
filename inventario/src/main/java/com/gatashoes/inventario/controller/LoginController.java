@@ -1,54 +1,49 @@
 package com.gatashoes.inventario.controller;
 
+import com.gatashoes.inventario.model.Administrador;
 import com.gatashoes.inventario.service.LoginService;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Optional;
 
 @Controller
 public class LoginController {
 
-    private final LoginService loginService;
+    @Autowired
+    private LoginService loginService;
 
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
-    }
-
-    @GetMapping("/acceso")
+    // =========================
+    // MOSTRAR LOGIN
+    // =========================
+    @GetMapping("/login")
     public String mostrarLogin() {
         return "Login";
     }
 
+    // =========================
+    // PROCESAR LOGIN
+    // =========================
     @PostMapping("/login")
-    public String login(
-            @RequestParam String email,
-            @RequestParam String password,
-            Model model,
-            HttpSession session
+    public String procesarLogin(
+            @RequestParam("correo") String correo,
+            @RequestParam("contrasena") String contrasena,
+            Model model
     ) {
 
-        boolean valido = loginService.validarLogin(email, password);
+        Optional<Administrador> admin =
+                loginService.validarLogin(correo, contrasena);
 
-        if (valido) {
-
-            session.setAttribute("usuario", email);
-
-            return "redirect:/dashboard";
+        if (admin.isPresent()) {
+            return "redirect:/resumen";
         }
 
-        model.addAttribute("error", "Usuario o contraseña incorrectos");
+        model.addAttribute("error", true);
 
         return "Login";
-    }
-
-    @GetMapping("/dashboard")
-    public String dashboard(HttpSession session) {
-
-        if (session.getAttribute("usuario") == null) {
-            return "redirect:/acceso";
-        }
-
-        return "dashboard";
     }
 }

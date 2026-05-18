@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface AdministradorRepository extends JpaRepository<Administrador, Integer> {
+public interface AdministradorRepository
+        extends JpaRepository<Administrador, Integer> {
 
-    Optional<Administrador> findByCorreoAndContrasena(String correo, String contrasena);
-
+    Optional<Administrador> findByCorreo(String correo);
 }

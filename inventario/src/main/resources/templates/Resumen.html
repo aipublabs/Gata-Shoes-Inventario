@@ -1,251 +1,194 @@
 <!DOCTYPE html>
-<html class="light" lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="UTF-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Gata Shoes - Resumen del Sistema</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght=400;700;800&family=Inter:wght=400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-secondary": "#ffffff",
-                    "surface-container-low": "#f4f3f6",
-                    "on-error-container": "#93000a",
-                    "background": "#faf9fc",
-                    "outline": "#7e7386",
-                    "secondary-fixed": "#e1e0fb",
-                    "surface-dim": "#dadadc",
-                    "on-primary-fixed": "#270057",
-                    "on-surface": "#1a1c1e",
-                    "on-secondary-container": "#626279",
-                    "on-primary-container": "#ebdaff",
-                    "inverse-on-surface": "#f1f0f3",
-                    "outline-variant": "#cfc2d7",
-                    "on-primary": "#ffffff",
-                    "on-secondary-fixed-variant": "#44455a",
-                    "primary-fixed": "#ecdcff",
-                    "error": "#ba1a1a",
-                    "on-primary-fixed-variant": "#5e00c1",
-                    "primary": "#6500cd",
-                    "secondary-fixed-dim": "#c5c4de",
-                    "inverse-primary": "#d5baff",
-                    "on-tertiary-fixed": "#2c0050",
-                    "surface-bright": "#faf9fc",
-                    "on-tertiary": "#ffffff",
-                    "on-tertiary-container": "#efd9ff",
-                    "surface": "#faf9fc",
-                    "inverse-surface": "#2f3033",
-                    "primary-container": "#8218ff",
-                    "error-container": "#ffdad6",
-                    "secondary-container": "#e1e0fb",
-                    "on-surface-variant": "#4c4354",
-                    "on-background": "#1a1c1e",
-                    "surface-container": "#eeedf0",
-                    "on-secondary-fixed": "#191a2d",
-                    "tertiary-container": "#8147b8",
-                    "tertiary-fixed": "#f0dbff",
-                    "surface-tint": "#7d00fa",
-                    "primary-fixed-dim": "#d5baff",
-                    "on-tertiary-fixed-variant": "#622599",
-                    "surface-container-lowest": "#ffffff",
-                    "tertiary-fixed-dim": "#ddb7ff",
-                    "on-error": "#ffffff",
-                    "surface-variant": "#e3e2e5",
-                    "secondary": "#5c5c73",
-                    "surface-container-highest": "#e3e2e5",
-                    "tertiary": "#682c9e",
-                    "surface-container-high": "#e8e8eb"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Manrope"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-            }
-          },
-        },
-      }
-    </script>
     <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
     </style>
 </head>
-<body class="bg-background text-on-surface">
+<body class="bg-slate-50 text-slate-800">
 
-    <script src="data.js"></script>
+<div class="min-h-screen p-6 lg:p-10 max-w-7xl mx-auto">
 
-    <aside class="hidden lg:flex flex-col h-screen w-72 fixed left-0 top-0 bg-[#44455a] shadow-2xl z-50 py-6 overflow-y-auto">
-        <div class="px-6 mb-10 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/10">
-                <span class="material-symbols-outlined text-white">diamond</span>
+    <!-- HEADER -->
+    <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-2">Resumen del Sistema</h1>
+            <p class="text-slate-500">Estado actual de la salud del inventario y el catálogo.</p>
+        </div>
+        <button type="button" onclick="abrirModal()"
+                class="flex items-center gap-2 bg-violet-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-violet-600/20 hover:bg-violet-700 transition-all transform hover:scale-[1.02] active:scale-95">
+            <span class="material-symbols-outlined text-lg">add</span>
+            <span>Nuevo Producto</span>
+        </button>
+    </div>
+
+    <!-- MÉTRICAS PRINCIPALES -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between h-44">
+            <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center text-violet-600">
+                <span class="material-symbols-outlined">inventory_2</span>
             </div>
             <div>
-                <h2 class="text-white text-xl font-black tracking-tight leading-none">Gata Shoes</h2>
-                <p class="text-violet-200 text-xs opacity-70 mt-1">Admin Atelier</p>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Variantes en Inventario</p>
+                <h3 class="text-4xl font-black text-slate-800" th:text="${#lists.size(listaInventario)}">0</h3>
             </div>
         </div>
-        <nav class="flex-1 space-y-1">
-            <a class="bg-violet-600/20 text-white border-r-4 border-violet-400 px-6 py-3 flex items-center gap-3 font-bold text-sm" href="Resumen.html">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span> Dashboard
-            </a>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Productos.html">
-                <span class="material-symbols-outlined">inventory_2</span> Catálogo
-            </a>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Inventario_Activo.html">
-                <span class="material-symbols-outlined">analytics</span> Estado de Inventario
-            </a>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Inventario_Alerta.html">
-                <span class="material-symbols-outlined text-error">warning</span> Alertas de Stock
-            </a>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Existencias.html">
-                <span class="material-symbols-outlined">edit_square</span> Ajuste de Stock
-            </a>
-            <div class="h-px bg-white/10 my-2 mx-6"></div>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Categorias.html">
-                <span class="material-symbols-outlined">category</span> Categorías
-            </a>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Atributos.html">
-                <span class="material-symbols-outlined">tune</span> Atributos
-            </a>
-            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Administradores.html">
-                <span class="material-symbols-outlined">admin_panel_settings</span> Administradores
-            </a>
-        </nav>
-        <div class="mt-auto px-6 pt-4">
-            <button onclick="cerrarSesion()" class="w-full text-slate-300 px-4 py-3 flex items-center justify-center gap-3 hover:bg-white/10 rounded-xl transition-all text-sm">
-                <span class="material-symbols-outlined">logout</span> Cerrar Sesión
-            </button>
-        </div>
-    </aside>
 
-    <main class="lg:ml-72 min-h-screen flex flex-col">
-        <header class="bg-white backdrop-blur-md flex justify-between items-center w-full px-6 py-3 sticky top-0 z-40 shadow-sm">
-            <div class="flex items-center gap-4 flex-1">
-                <div class="relative w-full max-w-md">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
-                    <input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Buscar productos..."/>
-                </div>
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between h-44">
+            <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
+                <span class="material-symbols-outlined">analytics</span>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p id="user-display-name" class="text-xs font-bold font-manrope text-on-surface">Cargando...</p>
-                    <p class="text-[10px] text-slate-500">Superuser</p>
-                </div>
-                <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs border border-primary/20">
-                    GS
-                </div>
-            </div>
-        </header>
-
-        <div class="p-6 lg:p-10 flex-1 bg-background">
-            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 class="text-3xl lg:text-4xl font-extrabold text-on-surface tracking-tight mb-2">Resumen del Sistema</h1>
-                    <p class="text-on-surface-variant">Estado actual de la salud del inventario y el catálogo.</p>
-                </div>
-                <a href="Edicion.html" class="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                    <span class="material-symbols-outlined text-lg">add</span>
-                    <span>Nuevo Producto</span>
-                </a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm flex flex-col justify-between h-44 border border-outline-variant/10">
-                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary"><span class="material-symbols-outlined">inventory_2</span></div>
-                    <div>
-                        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Total Productos</p>
-                        <h3 id="stat-total-productos" class="text-4xl font-extrabold">0</h3>
-                    </div>
-                </div>
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm flex flex-col justify-between h-44 border border-outline-variant/10">
-                    <div class="w-12 h-12 bg-error-container/30 rounded-full flex items-center justify-center text-error"><span class="material-symbols-outlined">warning</span></div>
-                    <div>
-                        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Stock Bajo (< 10)</p>
-                        <h3 id="stat-stock-bajo" class="text-4xl font-extrabold text-error">0</h3>
-                    </div>
-                </div>
-                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm flex flex-col justify-between h-44 border border-outline-variant/10">
-                    <div class="w-12 h-12 bg-tertiary/10 rounded-full flex items-center justify-center text-tertiary"><span class="material-symbols-outlined">list_alt</span></div>
-                    <div>
-                        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Categorías Activas</p>
-                        <h3 id="stat-categorias" class="text-4xl font-extrabold">0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10 mb-10">
-                <h3 class="text-xl font-bold mb-6">Distribución de Stock por Categoría</h3>
-                <div id="chart-container" class="h-48 flex items-end justify-around gap-4 px-2"></div>
-            </div>
-
             <div>
-                <h2 class="text-2xl font-bold tracking-tight mb-6">Nuevos Ingresos</h2>
-                <div id="lista-novedades" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                    </div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Stock Total</p>
+                <h3 class="text-4xl font-black text-emerald-600"
+                    th:text="${#aggregates.sum(listaInventario.![stock]) != null ? #aggregates.sum(listaInventario.![stock]) : 0}">0</h3>
             </div>
         </div>
-    </main>
 
-    <script>
-        function cargarDashboard() {
-            const inventario = obtenerInventario();
-            const sesion = JSON.parse(sessionStorage.getItem('gata_shoes_sesion_activa'));
-            if (sesion) document.getElementById('user-display-name').innerText = sesion.nombre;
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between h-44">
+            <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600">
+                <span class="material-symbols-outlined">warning</span>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Alertas de Stock Bajo (&lt;= 3)</p>
+                <h3 class="text-4xl font-black text-amber-500"
+                    th:text="${#lists.size(listaInventario.?[stock &lt;= 3])}">0</h3>
+            </div>
+        </div>
+    </div>
 
-            document.getElementById('stat-total-productos').innerText = inventario.length;
-            document.getElementById('stat-stock-bajo').innerText = inventario.filter(p => p.stock < 10).length.toString().padStart(2, '0');
-            document.getElementById('stat-categorias').innerText = [...new Set(inventario.map(p => p.categoria))].length;
+    <!-- DISTRIBUCIÓN DE STOCK REAL POR CATEGORÍA -->
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 mb-10">
+        <h3 class="text-xl font-bold text-slate-800 mb-2">Distribución de Stock Real por Categoría</h3>
+        <p class="text-xs text-slate-400 mb-6">Proporción porcentual del Top 4 de categorías con mayor volumen en tienda.</p>
 
-            const chartContainer = document.getElementById('chart-container');
-            const conteoPorCat = {};
-            inventario.forEach(p => conteoPorCat[p.categoria] = (conteoPorCat[p.categoria] || 0) + p.stock);
-            const maxStock = Math.max(...Object.values(conteoPorCat), 1);
-            
-            chartContainer.innerHTML = '';
-            Object.keys(conteoPorCat).forEach(cat => {
-                const porcentaje = (conteoPorCat[cat] / maxStock) * 100;
-                chartContainer.innerHTML += `
-                    <div class="flex flex-col items-center gap-2 flex-1">
-                        <div class="w-full bg-surface-container-low rounded-t-lg relative h-40">
-                            <div class="absolute bottom-0 left-0 right-0 bg-primary rounded-t-lg transition-all duration-1000" style="height: ${porcentaje}%"></div>
-                        </div>
-                        <span class="text-[10px] font-bold text-on-surface-variant truncate w-full text-center">${cat}</span>
+        <!-- Contenedor dinámico del gráfico -->
+        <div th:with="totalStock=${#aggregates.sum(listaInventario.![stock]) ?: 0}" id="chart-container" class="h-48 flex items-end justify-around gap-4 px-2">
+
+            <!-- Iteración automática del Top 4 procesado en el backend -->
+            <div th:each="cat : ${topCategoriasStock}" class="flex flex-col items-center gap-2 flex-1">
+                <div class="w-full bg-slate-100 rounded-t-lg relative h-40">
+                    <div class="absolute bottom-0 left-0 right-0 bg-violet-600 rounded-t-lg transition-all duration-700"
+                         th:style="|height: ${totalStock gt 0 ? (cat.stock * 100 / totalStock) : 0}%|"></div>
+                </div>
+                <!-- Nombre de categoría y cantidad física -->
+                <span class="text-[11px] font-bold text-slate-600 truncate w-full text-center"
+                      th:text="${cat.nombreCategoria} + ' (' + ${cat.stock} + ')'">Categoría (0)</span>
+            </div>
+
+            <!-- Estado de contingencia si no existen datos en el inventario -->
+            <div th:if="${#lists.isEmpty(topCategoriasStock)}" class="w-full text-center text-slate-400 text-sm mt-10 font-medium">
+                No hay categorías registradas en el inventario.
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SECCIÓN: NUEVOS INGRESOS -->
+    <div class="mb-10">
+        <h2 class="text-2xl font-black tracking-tight text-slate-800 mb-4">Nuevos Ingresos</h2>
+        <p class="text-slate-400 text-xs -mt-3 mb-6">Los últimos 5 artículos añadidos recientemente al catálogo virtual de la tienda.</p>
+
+        <div id="lista-novedades" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            <div th:each="item : ${listaNovedades}" class="group cursor-pointer bg-white p-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                <div class="aspect-[4/5] bg-slate-50 rounded-xl overflow-hidden mb-3 relative border border-slate-100">
+                    <img th:src="${item.producto.urlImagen != null ? item.producto.urlImagen : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200'}"
+                         th:alt="${item.producto.nombre}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute top-2 right-2">
+                        <span class="bg-white/90 backdrop-blur-sm text-[10px] font-bold px-2 py-0.5 rounded-md text-slate-700 shadow-sm" th:text="'ID: ' + ${item.producto.idProducto}">ID</span>
                     </div>
-                `;
-            });
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 truncate" th:text="${item.producto.nombre}">Nombre del Producto</h4>
+                <p class="text-xs text-slate-400 mt-0.5" th:text="${item.producto.categoria != null ? item.producto.categoria.nombreCategoria : 'Sin Categoría'}">Categoría</p>
+                <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
+                    <span class="text-xs font-black text-violet-600" th:text="'$ ' + ${item.producto.precio}">Precio</span>
+                    <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-1.5 py-0.5 rounded" th:text="'Talla: ' + ${item.talla?.numero}">Talla</span>
+                </div>
+            </div>
 
-            const novedades = document.getElementById('lista-novedades');
-            const ultimos = inventario.slice(-5).reverse();
-            novedades.innerHTML = '';
-            ultimos.forEach(p => {
-                const imgSrc = p.imagen ? p.imagen : 'https://via.placeholder.com/500?text=No+Image';
-                novedades.innerHTML += `
-                    <div class="group cursor-pointer">
-                        <div class="aspect-[4/5] bg-surface-container rounded-xl overflow-hidden mb-3 relative">
-                            <img src="${imgSrc}" alt="${p.nombre}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute top-3 right-3">
-                                <span class="bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-1 rounded-md text-on-surface">SKU: ${p.sku}</span>
-                            </div>
-                        </div>
-                        <h4 class="font-bold text-sm text-on-surface truncate">${p.nombre}</h4>
-                        <p class="text-xs text-on-surface-variant">${p.categoria}</p>
-                    </div>
-                `;
-            });
+            <div th:if="${#lists.isEmpty(listaNovedades)}" class="col-span-full text-center py-8 text-slate-400 text-sm font-medium">
+                No hay registros recientes disponibles.
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: TOP 3 CON MAYOR STOCK -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-10">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="text-2xl font-black text-slate-800">Top 3 con Mayor Stock</h2>
+            <p class="text-xs text-slate-400 mt-1">Variantes físicas críticas que lideran el volumen de almacenamiento.</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead class="bg-slate-50 text-slate-500 font-bold text-sm border-b">
+                <tr>
+                    <th class="text-left p-4">Imagen</th>
+                    <th class="text-left p-4">Código (ID)</th>
+                    <th class="text-left p-4">Nombre</th>
+                    <th class="text-left p-4">Categoría</th>
+                    <th class="text-left p-4">Color</th>
+                    <th class="text-left p-4">Talla</th>
+                    <th class="text-left p-4">Stock</th>
+                    <th class="text-left p-4">Precio</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm">
+                <tr th:each="item : ${listaTopStock}" class="hover:bg-slate-50/80 transition-colors">
+                    <td class="p-4">
+                        <img th:src="${item.producto.urlImagen != null ? item.producto.urlImagen : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200'}"
+                             class="w-16 h-16 object-cover rounded-xl border border-slate-200" alt="Imagen del calzado">
+                    </td>
+                    <td class="p-4 font-bold text-slate-600" th:text="'#' + ${item.producto.idProducto}"></td>
+                    <td class="p-4 font-semibold text-slate-800" th:text="${item.producto.nombre}"></td>
+                    <td class="p-4 text-slate-600" th:text="${item.producto.categoria != null ? item.producto.categoria.nombreCategoria : 'Sin Categoría'}"></td>
+                    <td class="p-4 text-slate-600" th:text="${item.color != null ? item.color.nombreColor : 'N/A'}"></td>
+                    <td class="p-4 text-slate-700 font-medium" th:text="${item.talla != null ? item.talla.numero : 'N/A'}"></td>
+                    <td class="p-4 font-bold" th:classappend="${item.stock &lt;= 3} ? 'text-red-500' : 'text-slate-700'" th:text="${item.stock}"></td>
+                    <td class="p-4 font-black text-violet-600" th:text="'$ ' + ${item.producto.precio}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(listaTopStock)}">
+                    <td colspan="8" class="text-center p-12 text-slate-400 font-medium">
+                        No hay productos registrados en el inventario actualmente.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- INYECCIÓN DEL MODAL DESDE EDICION.HTML -->
+<div th:replace="~{Edicion :: modalEdicion}"></div>
+
+<!-- CONTROL INTERACTIVO DEL POP-UP (JAVASCRIPT) -->
+<script>
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+
+    function abrirModal() {
+        const modal = document.getElementById('modal-producto');
+        if(modal) {
+            modal.classList.remove('hidden');
         }
-        window.onload = cargarDashboard;
-    </script>
+    }
+
+    function cerrarModal() {
+        const modal = document.getElementById('modal-producto');
+        if(modal) {
+            modal.classList.add('hidden');
+        }
+    }
+</script>
+
 </body>
 </html>

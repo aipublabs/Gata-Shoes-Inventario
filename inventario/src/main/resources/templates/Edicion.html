@@ -1,0 +1,116 @@
+<div th:fragment="modalEdicion" id="modal-producto" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-slate-100 max-w-5xl w-full animate-in fade-in zoom-in-95 duration-200">
+
+        <!-- PANEL IZQUIERDO: VISTA PREVIA -->
+        <div class="bg-slate-50 p-8 flex flex-col justify-center items-center border-b md:border-b-0 md:border-r border-slate-100">
+            <div class="w-full aspect-square bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 flex items-center justify-center relative">
+                <img id="preview" class="w-full h-full object-cover hidden" src="" alt="Vista previa del zapato">
+
+                <div id="placeholder" class="text-center p-4">
+                    <span class="material-symbols-outlined text-6xl text-slate-300">add_photo_alternate</span>
+                    <p class="mt-3 text-sm text-slate-400 font-semibold">Pegue una URL de imagen válida para previsualizar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO: FORMULARIO -->
+        <div class="p-8 lg:p-10">
+            <div class="mb-6 flex justify-between items-start">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-800 tracking-tight">Nuevo Producto</h1>
+                    <p class="text-slate-400 text-sm mt-1">Registrar variantes físicas en el catálogo general.</p>
+                </div>
+                <button type="button" onclick="cerrarModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Acción dirigida al controlador de persistencia de Spring Boot -->
+            <form th:action="@{/productos/guardar}" th:object="${inventarioForm}" method="post" class="space-y-4">
+
+                <!-- Nombre del Producto -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombre del Calzado</label>
+                    <input type="text" th:field="*{producto.nombre}" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" placeholder="Ej: Converse Chuck Taylor All Star" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Precio de Venta -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Precio de Venta</label>
+                        <input type="number" step="0.01" th:field="*{producto.precio}" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" placeholder="0.00" required>
+                    </div>
+
+                    <!-- Selección de Categoría Relacional (Dinámica) -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Categoría</label>
+                        <select th:field="*{producto.categoria.idCategoria}" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" required>
+                            <option value="">Seleccionar...</option>
+                            <!-- Carga exclusiva desde los registros de la Base de Datos -->
+                            <option th:each="cat : ${listaCategorias}" th:value="${cat.idCategoria}" th:text="${cat.nombreCategoria}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <!-- Talla -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Talla</label>
+                        <input type="number" th:field="*{talla.numero}" min="20" max="50" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" placeholder="37" required>
+                    </div>
+
+                    <!-- Stock Físico -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Stock Inicial</label>
+                        <input type="number" th:field="*{stock}" min="0" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" placeholder="12" required>
+                    </div>
+
+                    <!-- Atributo Color -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Color</label>
+                        <input type="text" th:field="*{color.nombreColor}" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" placeholder="Negro" required>
+                    </div>
+                </div>
+
+                <!-- URL Temática de la Imagen -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Vínculo URL de Imagen</label>
+                    <input type="url" id="imagen" th:field="*{producto.urlImagen}" class="w-full rounded-xl border-slate-200 px-4 py-3 text-sm focus:border-violet-500 focus:ring-violet-500/20" placeholder="https://images.unsplash.com/..." required>
+                </div>
+
+                <!-- BOTONES DE NAVEGACIÓN -->
+                <div class="pt-4 flex gap-4">
+                    <button type="button" onclick="cerrarModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-xl font-bold text-sm transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-3 rounded-xl font-bold text-sm shadow-md shadow-violet-600/10 transition-colors">
+                        Guardar Registro
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT LIVE PREVIEW -->
+    <script>
+        const inputImagen = document.getElementById('imagen');
+        const preview = document.getElementById('preview');
+        const placeholder = document.getElementById('placeholder');
+
+        function actualizarVistaPrevia() {
+            if (inputImagen && inputImagen.value.trim() !== "") {
+                preview.src = inputImagen.value;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else if (preview && placeholder) {
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
+        }
+        if(inputImagen) {
+            inputImagen.addEventListener('input', actualizarVistaPrevia);
+        }
+    </script>
+</div>
