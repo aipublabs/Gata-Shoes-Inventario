@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Categorías</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        h1{
+            color: #333;
+        }
+
+        table{
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        table, th, td{
+            border: 1px solid #ccc;
+        }
+
+        th, td{
+            padding: 12px;
+            text-align: center;
+        }
+
+        th{
+            background-color: #333;
+            color: white;
+        }
+
+        a{
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .btn-nuevo{
+            background-color: green;
+        }
+
+        .btn-editar{
+            background-color: orange;
+        }
+
+        .btn-eliminar{
+            background-color: red;
+        }
+
+        .contenedor-boton{
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>Gestión de Categorías</h1>
+
+<div class="contenedor-boton">
+    <a th:href="@{/categorias/nueva}" class="btn-nuevo">
+        Nueva Categoría
+    </a>
+</div>
+
+<table>
+
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre Categoría</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr th:each="categoria : ${categorias}">
+
+        <td th:text="${categoria.idCategoria}"></td>
+
+        <td th:text="${categoria.nombreCategoria}"></td>
+
+        <td>
+
+            <a th:href="@{/categorias/editar/{id}(id=${categoria.idCategoria})}"
+               class="btn-editar">
+                Editar
+            </a>
+
+            <a th:href="@{/categorias/eliminar/{id}(id=${categoria.idCategoria})}"
+               class="btn-eliminar"
+               onclick="return confirm('¿Desea eliminar esta categoría?')">
+                Eliminar
+            </a>
+
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+
+<br>
+
+<a href="/resumen">
+    Volver al Dashboard
+</a>
+
+</body>
+
+</html>

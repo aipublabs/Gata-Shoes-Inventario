@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Formulario Categoría</title>
+
+  <style>
+
+    body{
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f5f5f5;
+    }
+
+    .contenedor{
+      width: 400px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+    input{
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    button{
+      padding: 10px 20px;
+      background-color: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    a{
+      text-decoration: none;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="contenedor">
+
+  <h1 th:text="${categoria.idCategoria == null} ?
+        'Nueva Categoría' : 'Editar Categoría'">
+  </h1>
+
+  <form th:action="${categoria.idCategoria == null}
+            ? @{/categorias/guardar}
+            : @{/categorias/actualizar/{id}(id=${categoria.idCategoria})}"
+        th:object="${categoria}"
+        method="post">
+
+    <label>Nombre Categoría</label>
+
+    <input type="text"
+           th:field="*{nombreCategoria}"
+           placeholder="Ingrese nombre categoría"
+           required>
+
+    <button type="submit">
+      Guardar
+    </button>
+
+  </form>
+
+  <br>
+
+  <a href="/categorias">
+    Volver al listado
+  </a>
+
+</div>
+
+</body>
+
+</html>
