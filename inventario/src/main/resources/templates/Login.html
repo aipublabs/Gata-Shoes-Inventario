@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="light" lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+    <title>Gata Shoes - Acceso al Sistema</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
+          rel="stylesheet"/>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"/>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#6500cd",
+                        "primary-container": "#8218ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f4f3f6",
+                        "surface": "#faf9fc",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1a1c1e",
+                        outline: "#7e7386",
+                        "outline-variant": "#cfc2d7",
+                        "on-surface-variant": "#4c4354",
+                        secondary: "#5c5c73"
+                    },
+                    fontFamily: {
+                        headline: ["Manrope"],
+                        body: ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+
+        .material-symbols-outlined {
+            font-variation-settings:
+                    'FILL' 0,
+                    'wght' 400,
+                    'GRAD' 0,
+                    'opsz' 24;
+
+            vertical-align: middle;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #faf9fc;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .login-card {
+            box-shadow: 0 10px 40px -10px rgba(26, 28, 30, 0.06);
+        }
+
+        .bg-login-gradient {
+            background: radial-gradient(circle at top right, #f0dbff 0%, #faf9fc 50%);
+        }
+
+    </style>
+
+</head>
+
+<body class="bg-login-gradient min-h-screen flex items-center justify-center p-6">
+
+<main class="w-full max-w-md">
+
+    <div class="bg-white rounded-xl p-8 md:p-12 login-card flex flex-col items-center">
+
+        <!-- LOGO -->
+
+        <div class="mb-8 flex flex-col items-center">
+
+            <div class="mb-4 bg-primary rounded-xl p-2.5 shadow-lg shadow-primary/20">
+
+                <span class="material-symbols-outlined text-white text-4xl">
+                    settings_accessibility
+                </span>
+
+            </div>
+
+            <h1 class="text-2xl font-black italic tracking-tighter text-gray-800">
+                Gata Shoes
+            </h1>
+
+            <p class="text-gray-500 font-medium text-sm mt-1 tracking-wide">
+                Acceso al sistema de gestión
+            </p>
+
+        </div>
+
+        <!-- FORM LOGIN -->
+
+        <form action="/login"
+              method="post"
+              class="w-full space-y-6">
+
+            <!-- EMAIL -->
+
+            <div class="space-y-2">
+
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 ml-1">
+
+                    Correo Electrónico
+
+                </label>
+
+                <div class="relative group">
+
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+
+                        <span class="material-symbols-outlined text-gray-400 text-lg">
+                            mail
+                        </span>
+
+                    </div>
+
+                    <input
+                            class="w-full bg-gray-50 border-0 ring-1 ring-gray-200 rounded-xl py-4 pl-12 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-purple-600 transition-all outline-none text-sm font-medium"
+
+                            id="email"
+                            name="email"
+                            type="email"
+
+                            placeholder="admin@gatashoes.com"
+
+                            required
+                    />
+
+                </div>
+
+            </div>
+
+            <!-- PASSWORD -->
+
+            <div class="space-y-2">
+
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 ml-1">
+
+                    Contraseña
+
+                </label>
+
+                <div class="relative group">
+
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+
+                        <span class="material-symbols-outlined text-gray-400 text-lg">
+                            lock_open
+                        </span>
+
+                    </div>
+
+                    <input
+                            class="w-full bg-gray-50 border-0 ring-1 ring-gray-200 rounded-xl py-4 pl-12 pr-4 text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-purple-600 transition-all outline-none text-sm font-medium"
+
+                            id="password"
+                            name="password"
+                            type="password"
+
+                            placeholder="••••••••••••"
+
+                            required
+                    />
+
+                </div>
+
+            </div>
+
+            <!-- BOTON -->
+
+            <div class="pt-4">
+
+                <button
+                        class="w-full bg-gradient-to-br from-purple-700 to-purple-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+
+                        type="submit">
+
+                    <span class="material-symbols-outlined text-xl">
+                        lock
+                    </span>
+
+                    <span>
+                        Ingresar
+                    </span>
+
+                </button>
+
+            </div>
+
+            <!-- ERROR LOGIN -->
+
+            <div th:if="${error}"
+                 class="bg-red-100 border border-red-300 text-red-700 text-sm rounded-lg p-3 text-center">
+
+                <span th:text="${error}"></span>
+
+            </div>
+
+        </form>
+
+        <!-- RECUPERAR -->
+
+        <div class="mt-8">
+
+            <a class="text-sm font-semibold text-purple-700 underline underline-offset-4"
+               href="#">
+
+                Recuperar contraseña
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="mt-12 text-center">
+
+        <p class="text-xs font-medium text-gray-400 flex items-center justify-center gap-2">
+
+            <span>
+                © 2026 Gata Shoes Inventario
+            </span>
+
+            <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+
+            <span>
+                v2.4.0
+            </span>
+
+        </p>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

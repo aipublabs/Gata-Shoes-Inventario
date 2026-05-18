@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Gata Shoes - Resumen del Sistema</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "surface-container-low": "#f4f3f6",
+                    "on-error-container": "#93000a",
+                    "background": "#faf9fc",
+                    "outline": "#7e7386",
+                    "secondary-fixed": "#e1e0fb",
+                    "surface-dim": "#dadadc",
+                    "on-primary-fixed": "#270057",
+                    "on-surface": "#1a1c1e",
+                    "on-secondary-container": "#626279",
+                    "on-primary-container": "#ebdaff",
+                    "inverse-on-surface": "#f1f0f3",
+                    "outline-variant": "#cfc2d7",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#44455a",
+                    "primary-fixed": "#ecdcff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#5e00c1",
+                    "primary": "#6500cd",
+                    "secondary-fixed-dim": "#c5c4de",
+                    "inverse-primary": "#d5baff",
+                    "on-tertiary-fixed": "#2c0050",
+                    "surface-bright": "#faf9fc",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#efd9ff",
+                    "surface": "#faf9fc",
+                    "inverse-surface": "#2f3033",
+                    "primary-container": "#8218ff",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#e1e0fb",
+                    "on-surface-variant": "#4c4354",
+                    "on-background": "#1a1c1e",
+                    "surface-container": "#eeedf0",
+                    "on-secondary-fixed": "#191a2d",
+                    "tertiary-container": "#8147b8",
+                    "tertiary-fixed": "#f0dbff",
+                    "surface-tint": "#7d00fa",
+                    "primary-fixed-dim": "#d5baff",
+                    "on-tertiary-fixed-variant": "#622599",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#ddb7ff",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e3e2e5",
+                    "secondary": "#5c5c73",
+                    "surface-container-highest": "#e3e2e5",
+                    "tertiary": "#682c9e",
+                    "surface-container-high": "#e8e8eb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+
+    <script src="data.js"></script>
+
+    <aside class="hidden lg:flex flex-col h-screen w-72 fixed left-0 top-0 bg-[#44455a] shadow-2xl z-50 py-6 overflow-y-auto">
+        <div class="px-6 mb-10 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/10">
+                <span class="material-symbols-outlined text-white">diamond</span>
+            </div>
+            <div>
+                <h2 class="text-white text-xl font-black tracking-tight leading-none">Gata Shoes</h2>
+                <p class="text-violet-200 text-xs opacity-70 mt-1">Admin Atelier</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="bg-violet-600/20 text-white border-r-4 border-violet-400 px-6 py-3 flex items-center gap-3 font-bold text-sm" href="Resumen.html">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span> Dashboard
+            </a>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Productos.html">
+                <span class="material-symbols-outlined">inventory_2</span> Catálogo
+            </a>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Inventario_Activo.html">
+                <span class="material-symbols-outlined">analytics</span> Estado de Inventario
+            </a>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Inventario_Alerta.html">
+                <span class="material-symbols-outlined text-error">warning</span> Alertas de Stock
+            </a>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Existencias.html">
+                <span class="material-symbols-outlined">edit_square</span> Ajuste de Stock
+            </a>
+            <div class="h-px bg-white/10 my-2 mx-6"></div>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Categorias.html">
+                <span class="material-symbols-outlined">category</span> Categorías
+            </a>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Atributos.html">
+                <span class="material-symbols-outlined">tune</span> Atributos
+            </a>
+            <a class="text-slate-300 px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all text-sm" href="Administradores.html">
+                <span class="material-symbols-outlined">admin_panel_settings</span> Administradores
+            </a>
+        </nav>
+        <div class="mt-auto px-6 pt-4">
+            <button onclick="cerrarSesion()" class="w-full text-slate-300 px-4 py-3 flex items-center justify-center gap-3 hover:bg-white/10 rounded-xl transition-all text-sm">
+                <span class="material-symbols-outlined">logout</span> Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <main class="lg:ml-72 min-h-screen flex flex-col">
+        <header class="bg-white backdrop-blur-md flex justify-between items-center w-full px-6 py-3 sticky top-0 z-40 shadow-sm">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="relative w-full max-w-md">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                    <input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20" placeholder="Buscar productos..."/>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p id="user-display-name" class="text-xs font-bold font-manrope text-on-surface">Cargando...</p>
+                    <p class="text-[10px] text-slate-500">Superuser</p>
+                </div>
+                <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs border border-primary/20">
+                    GS
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 lg:p-10 flex-1 bg-background">
+            <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl font-extrabold text-on-surface tracking-tight mb-2">Resumen del Sistema</h1>
+                    <p class="text-on-surface-variant">Estado actual de la salud del inventario y el catálogo.</p>
+                </div>
+                <a href="Edicion.html" class="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-lg">add</span>
+                    <span>Nuevo Producto</span>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm flex flex-col justify-between h-44 border border-outline-variant/10">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary"><span class="material-symbols-outlined">inventory_2</span></div>
+                    <div>
+                        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Total Productos</p>
+                        <h3 id="stat-total-productos" class="text-4xl font-extrabold">0</h3>
+                    </div>
+                </div>
+                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm flex flex-col justify-between h-44 border border-outline-variant/10">
+                    <div class="w-12 h-12 bg-error-container/30 rounded-full flex items-center justify-center text-error"><span class="material-symbols-outlined">warning</span></div>
+                    <div>
+                        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Stock Bajo (< 10)</p>
+                        <h3 id="stat-stock-bajo" class="text-4xl font-extrabold text-error">0</h3>
+                    </div>
+                </div>
+                <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm flex flex-col justify-between h-44 border border-outline-variant/10">
+                    <div class="w-12 h-12 bg-tertiary/10 rounded-full flex items-center justify-center text-tertiary"><span class="material-symbols-outlined">list_alt</span></div>
+                    <div>
+                        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-wider mb-1">Categorías Activas</p>
+                        <h3 id="stat-categorias" class="text-4xl font-extrabold">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10 mb-10">
+                <h3 class="text-xl font-bold mb-6">Distribución de Stock por Categoría</h3>
+                <div id="chart-container" class="h-48 flex items-end justify-around gap-4 px-2"></div>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight mb-6">Nuevos Ingresos</h2>
+                <div id="lista-novedades" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function cargarDashboard() {
+            const inventario = obtenerInventario();
+            const sesion = JSON.parse(sessionStorage.getItem('gata_shoes_sesion_activa'));
+            if (sesion) document.getElementById('user-display-name').innerText = sesion.nombre;
+
+            document.getElementById('stat-total-productos').innerText = inventario.length;
+            document.getElementById('stat-stock-bajo').innerText = inventario.filter(p => p.stock < 10).length.toString().padStart(2, '0');
+            document.getElementById('stat-categorias').innerText = [...new Set(inventario.map(p => p.categoria))].length;
+
+            const chartContainer = document.getElementById('chart-container');
+            const conteoPorCat = {};
+            inventario.forEach(p => conteoPorCat[p.categoria] = (conteoPorCat[p.categoria] || 0) + p.stock);
+            const maxStock = Math.max(...Object.values(conteoPorCat), 1);
+            
+            chartContainer.innerHTML = '';
+            Object.keys(conteoPorCat).forEach(cat => {
+                const porcentaje = (conteoPorCat[cat] / maxStock) * 100;
+                chartContainer.innerHTML += `
+                    <div class="flex flex-col items-center gap-2 flex-1">
+                        <div class="w-full bg-surface-container-low rounded-t-lg relative h-40">
+                            <div class="absolute bottom-0 left-0 right-0 bg-primary rounded-t-lg transition-all duration-1000" style="height: ${porcentaje}%"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-on-surface-variant truncate w-full text-center">${cat}</span>
+                    </div>
+                `;
+            });
+
+            const novedades = document.getElementById('lista-novedades');
+            const ultimos = inventario.slice(-5).reverse();
+            novedades.innerHTML = '';
+            ultimos.forEach(p => {
+                const imgSrc = p.imagen ? p.imagen : 'https://via.placeholder.com/500?text=No+Image';
+                novedades.innerHTML += `
+                    <div class="group cursor-pointer">
+                        <div class="aspect-[4/5] bg-surface-container rounded-xl overflow-hidden mb-3 relative">
+                            <img src="${imgSrc}" alt="${p.nombre}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute top-3 right-3">
+                                <span class="bg-white/90 backdrop-blur-md text-[10px] font-bold px-2 py-1 rounded-md text-on-surface">SKU: ${p.sku}</span>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-sm text-on-surface truncate">${p.nombre}</h4>
+                        <p class="text-xs text-on-surface-variant">${p.categoria}</p>
+                    </div>
+                `;
+            });
+        }
+        window.onload = cargarDashboard;
+    </script>
+</body>
+</html>
