@@ -11,26 +11,36 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Desactivamos CSRF para que permita el envío de tu formulario original sin tokens ocultos
-                .csrf(csrf -> csrf.disable())
-
-                // 2. Definimos qué URLs están protegidas y cuáles son públicas
-                .authorizeHttpRequests(auth -> auth
-                        // Acceso totalmente libre para tu pantalla de login y tus estilos/imágenes
-                        .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        // CUALQUIER otra pantalla interna (como /resumen) requiere inicio de sesión obligatorio
-                        .anyRequest().authenticated()
-                )
-
-                // NOTA DE INGENIERÍA: NO agregamos .formLogin() para permitir que TU controlador
-                // maneje la validación con la base de datos en su propio @PostMapping.
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                );
+            .authorizeHttpRequests(auth -> auth
+                // API REST — permitir temporalmente sin auth
+                .requestMatchers("/api/v1/**").permitAll()
+                // Recursos estáticos
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                // Login público
+                .requestMatchers("/login").permitAll()
+                // Todo lo demás requiere autenticación
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .usernameParameter("correo")
+                .passwordParameter("contrasena")
+                .defaultSuccessUrl("/resumen", true)
+                .failureUrl("/login?error=true")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .permitAll()
+            )
+            .csrf(csrf -> csrf
+                // Deshabilitar CSRF solo para API REST
+                .ignoringRequestMatchers("/api/v1/**")
+            );
 
         return http.build();
     }
