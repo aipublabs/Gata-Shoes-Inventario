@@ -1,7 +1,7 @@
 package com.gatashoes.inventario.controller;
 
 import com.gatashoes.inventario.dto.InventarioForm;
-import com.gatashoes.inventario.dto.CategoriaStockDTO;
+import com.gatashoes.inventario.api.dto.response.CategoriaStockResponse;
 import com.gatashoes.inventario.repository.CategoriaRepository;
 import com.gatashoes.inventario.repository.InventarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class ResumenController {
         model.addAttribute("inventarioForm", new InventarioForm());
 
         // 6. NUEVA: Consulta del Top 4 de categorías con mayor stock de forma 100% dinámica
-        List<CategoriaStockDTO> topCategoriasStock = inventarioRepository.findTopCategoriasByStock(PageRequest.of(0, 4));
+        List<CategoriaStockResponse> topCategoriasStock = inventarioRepository.findTopCategoriasByStock(PageRequest.of(0, 4));
         model.addAttribute("topCategoriasStock", topCategoriasStock);
 
         return "Resumen";

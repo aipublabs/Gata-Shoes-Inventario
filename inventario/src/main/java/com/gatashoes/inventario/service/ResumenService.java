@@ -1,7 +1,6 @@
 package com.gatashoes.inventario.service;
 
 import com.gatashoes.inventario.api.dto.response.CategoriaStockResponse;
-import com.gatashoes.inventario.dto.CategoriaStockDTO;
 import com.gatashoes.inventario.model.Inventario;
 import com.gatashoes.inventario.repository.InventarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,38 +8,26 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ResumenService {
 
     @Autowired
-    private InventarioService inventarioService;
-
-    @Autowired
     private InventarioRepository inventarioRepository;
 
     public ResumenData obtenerResumen() {
-        List<Inventario> inventarios = inventarioService.listarInventario();
-        List<Inventario> novedades = inventarioService.listarNovedades();
-        List<Inventario> topStock = inventarioService.listarTopStock();
+        long totalVariantes = inventarioRepository.count();
+        Long totalStock = inventarioRepository.sumTotalStock();
+        Long alertasStockBajo = inventarioRepository.countStockBajo();
         List<CategoriaStockResponse> topCategoriasStock = inventarioRepository
-                .findTopCategoriasByStock(PageRequest.of(0, 5)).stream()
-                .map(dto -> new CategoriaStockResponse(dto.getNombreCategoria(), dto.getStock()))
-                .collect(Collectors.toList());
-
-        long totalVariantes = inventarios.size();
-        long totalStock = inventarios.stream()
-                .mapToLong(inventario -> inventario.getStock() == null ? 0L : inventario.getStock())
-                .sum();
-        long alertasStockBajo = inventarios.stream()
-                .filter(inventario -> inventario.getStock() != null && inventario.getStock() <= 3)
-                .count();
+                .findTopCategoriasByStock(PageRequest.of(0, 5));
+        List<Inventario> novedades = inventarioRepository.findTop5ByOrderByIdInventarioDesc();
+        List<Inventario> topStock = inventarioRepository.findTop3ByOrderByStockDesc();
 
         return new ResumenData(
                 totalVariantes,
-                totalStock,
-                alertasStockBajo,
+                totalStock != null ? totalStock : 0L,
+                alertasStockBajo != null ? alertasStockBajo : 0L,
                 topCategoriasStock,
                 novedades,
                 topStock
