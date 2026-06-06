@@ -22,11 +22,11 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
-    public Producto obtenerProductoPorId(Long idProducto) {
+    public Producto obtenerProductoPorId(Integer idProducto) {
         return productoRepository.findById(idProducto).orElse(null);
     }
 
-    public Producto obtenerProductoPorIdOrThrow(Long idProducto) {
+    public Producto obtenerProductoPorIdOrThrow(Integer idProducto) {
         return productoRepository.findById(idProducto)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id " + idProducto));
     }
@@ -35,7 +35,7 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
-    public void eliminarProducto(Long idProducto) {
+    public void eliminarProducto(Integer idProducto) {
         if (!productoRepository.existsById(idProducto)) {
             throw new ResourceNotFoundException("Producto no encontrado con id " + idProducto);
         }

@@ -30,8 +30,8 @@ public class ResumenService {
                 .collect(Collectors.toList());
 
         long totalVariantes = inventarios.size();
-        int totalStock = inventarios.stream()
-                .mapToInt(inventario -> inventario.getStock() == null ? 0 : inventario.getStock())
+        long totalStock = inventarios.stream()
+                .mapToLong(inventario -> inventario.getStock() == null ? 0L : inventario.getStock())
                 .sum();
         long alertasStockBajo = inventarios.stream()
                 .filter(inventario -> inventario.getStock() != null && inventario.getStock() <= 3)
@@ -49,7 +49,7 @@ public class ResumenService {
 
     public record ResumenData(
             long totalVariantes,
-            int totalStock,
+            long totalStock,
             long alertasStockBajo,
             List<CategoriaStockResponse> topCategoriasStock,
             List<Inventario> novedades,

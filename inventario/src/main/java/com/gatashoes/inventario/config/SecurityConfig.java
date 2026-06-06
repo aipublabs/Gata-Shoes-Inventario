@@ -1,26 +1,31 @@
 package com.gatashoes.inventario.config;
 
+import com.gatashoes.inventario.api.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/v1/**")
+            )
             .authorizeHttpRequests(auth -> auth
-                // API REST — permitir temporalmente sin auth
-                .requestMatchers("/api/v1/**").permitAll()
-                // Recursos estáticos
+                .requestMatchers("/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
+                .requestMatchers("/api/v1/**").authenticated()
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                // Login público
                 .requestMatchers("/login").permitAll()
-                // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -37,11 +42,14 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login")
                 .permitAll()
             )
-            .csrf(csrf -> csrf
-                // Deshabilitar CSRF solo para API REST
-                .ignoringRequestMatchers("/api/v1/**")
-            );
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
