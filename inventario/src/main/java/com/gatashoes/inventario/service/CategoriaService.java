@@ -1,5 +1,6 @@
 package com.gatashoes.inventario.service;
 
+import com.gatashoes.inventario.api.exception.ResourceNotFoundException;
 import com.gatashoes.inventario.model.Categoria;
 import com.gatashoes.inventario.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,18 @@ public class CategoriaService {
     }
 
     /**
-     * Buscar categoría por ID
+     * Buscar categoría por ID (puede retornar null para soporte de lógica antigua)
      */
     public Categoria obtenerCategoriaPorId(Integer idCategoria) {
+        return categoriaRepository.findById(idCategoria).orElse(null);
+    }
 
-        Optional<Categoria> categoria = categoriaRepository.findById(idCategoria);
-
-        return categoria.orElse(null);
+    /**
+     * Buscar categoría por ID y lanzar excepción si no existe
+     */
+    public Categoria obtenerCategoriaPorIdOrThrow(Integer idCategoria) {
+        return categoriaRepository.findById(idCategoria)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id " + idCategoria));
     }
 
     /**
@@ -46,9 +52,12 @@ public class CategoriaService {
     }
 
     /**
-     * Eliminar categoría
+     * Eliminar categoría validando existencia
      */
     public void eliminarCategoria(Integer idCategoria) {
+        if (!categoriaRepository.existsById(idCategoria)) {
+            throw new ResourceNotFoundException("Categoría no encontrada con id " + idCategoria);
+        }
         categoriaRepository.deleteById(idCategoria);
     }
 }
