@@ -6,6 +6,8 @@ import type { Inventario } from "../../types";
 type AdjustType = "add" | "sub" | "fix";
 
 const InventarioPage = () => {
+  // Componente dedicado a ajustar el stock de variantes existentes.
+  // Permite sumar, restar o fijar el total de existencias en cada SKU.
   const [inventario, setInventario] = useState<Inventario[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,6 +49,12 @@ const InventarioPage = () => {
     );
   });
 
+  /*
+    Calcula el stock resultante según el tipo de ajuste seleccionado.
+    - add: suma unidades al stock actual.
+    - sub: resta unidades sin permitir valores negativos.
+    - fix: fija el stock exactamente al valor ingresado.
+  */
   const calcPreview = (): number => {
     if (!selected) return 0;
     const qty = Number(cantidad) || 0;
@@ -61,6 +69,8 @@ const InventarioPage = () => {
     return "bg-secondary-container text-on-secondary-container";
   };
 
+  // Cambia la variante seleccionada y reinicia el formulario de ajuste.
+  // Esto evita que queden valores antiguos cuando el usuario cambia de SKU.
   const handleSelectItem = (item: Inventario) => {
     setSelected(item);
     setCantidad("");
@@ -70,9 +80,15 @@ const InventarioPage = () => {
     setErrorMsg("");
   };
 
+  /*
+    Procesa el formulario de ajuste de stock.
+    - Valida cantidad y reglas según el modo de ajuste.
+    - Si el stock resultante es 0, elimina la variante del inventario.
+    - Si no, actualiza el stock en el backend y refresca la lista.
+  */
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!selected) return;
+    e.preventDefault();
+    if (!selected) return;
 
   // ═══════════════════════════════════════════════════
   // VALIDACIONES

@@ -9,10 +9,17 @@ const navItems = [
 ];
 
 const Sidebar = () => {
+  // Componente de navegación lateral que muestra las rutas principales del panel.
+  // Permite conocer de un vistazo la sección activa y cerrar sesión.
   const location = useLocation();
   const { user, logout } = useAuth();
 
   const currentPath = location.pathname;
+  /*
+    Comprueba si un item de navegación está activo.
+    Para rutas secundarias como /inventario/123, sigue marcando Inventario
+    como activo mientras la ruta comience con ese path.
+  */
   const isActive = (path: string) => currentPath === path || (path !== "/resumen" && currentPath.startsWith(path));
 
   const userName = user?.nombre ?? "Administrador";

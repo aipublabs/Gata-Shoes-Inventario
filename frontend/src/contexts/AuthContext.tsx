@@ -12,6 +12,8 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Contexto de autenticación que mantiene el usuario actual y controla el estado de sesión.
+// Este contexto permite que toda la aplicación sepa si el usuario está autenticado.
 const isTokenExpired = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -21,6 +23,10 @@ const isTokenExpired = (token: string): boolean => {
   }
 };
 
+/*
+  Comprueba si el token guardado en LocalStorage está vencido.
+  Si el token expiró, se usa esta función para impedir accesos con credenciales caducas.
+*/
 const getStoredUser = (): AuthUser | null => {
   const token = localStorage.getItem("accessToken");
   const storedUser = localStorage.getItem("authUser");
@@ -35,7 +41,7 @@ const getStoredUser = (): AuthUser | null => {
   }
 
   try {
-    // Debug: show whether token/user were found at init
+    // Debugeo inicial para saber si ya había sesión almacenada al arrancar.
     // eslint-disable-next-line no-console
     console.log('[Auth] getStoredUser - token:', token ? 'SÍ' : 'NO', 'storedUser:', storedUser ? 'SÍ' : 'NO');
     return { ...JSON.parse(storedUser), accessToken: token } as AuthUser;
@@ -50,6 +56,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const isAuthenticated = Boolean(user?.accessToken);
 
+  /*
+    Ejecuta el proceso de login del usuario.
+
+    1. Marca la carga como activa.
+    2. Llama a la API de login con correo y contraseña.
+    3. Si la respuesta es exitosa, guarda el accessToken y los datos del usuario en localStorage.
+    4. Actualiza el estado global del contexto para que la app reconozca al usuario autenticado.
+    5. Siempre desactiva el estado de carga al finalizar.
+  */
   const login = async (correo: string, contrasena: string) => {
     setIsLoading(true);
     try {
@@ -77,6 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Cierra la sesión actual, elimina credenciales locales y fuerza el redireccionamiento a login.
   const logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("authUser");

@@ -14,11 +14,17 @@ import {
 import type { InventarioResumen, Inventario, Talla, Color } from "../../types";
 
 const ResumenPage = () => {
+  // Componente principal del dashboard que muestra KPIs, novedades y top stock.
+  // Presenta un resumen del estado actual del inventario y permite crear productos.
   const [resumen, setResumen] = useState<InventarioResumen | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  /*
+    Carga los datos del dashboard desde el backend.
+    Actualiza el estado de carga mientras espera la respuesta y maneja errores.
+  */
   const fetchResumen = async () => {
     setIsLoading(true);
     try {
@@ -90,6 +96,10 @@ const ResumenPage = () => {
 
   const topCategorias = resumen?.topCategoriasStock ?? [];
 
+  /*
+    Filtra y limita el listado de novedades para mostrar solo los últimos 5 artículos.
+    El memo evita recalcular la lista cada vez que el componente se renderiza sin cambios.
+  */
   const novedades = useMemo(() => {
     const items = resumen?.novedades ?? [];
     if (!searchTerm) return items.slice(0, 5);
@@ -100,6 +110,10 @@ const ResumenPage = () => {
       .slice(0, 5);
   }, [resumen, searchTerm]);
 
+  /*
+    Filtra el top de productos por nombre cuando hay término de búsqueda.
+    Si no hay término, muestra todo el top stock para la tabla.
+  */
   const topStock = useMemo(() => {
     const items = resumen?.topStock ?? [];
     if (!searchTerm) return items;
@@ -108,11 +122,22 @@ const ResumenPage = () => {
     );
   }, [resumen, searchTerm]);
 
+  /*
+    Calcula el valor máximo de stock entre las categorías para normalizar
+    la altura de las barras en el gráfico y mantener proporciones consistentes.
+  */
   const maxStock = useMemo(() => {
     const stocks = topCategorias.map((c) => c.stock);
     return Math.max(...stocks, 1);
   }, [topCategorias]);
 
+  /*
+    Envía el formulario del modal para crear una nueva variante.
+    1) Valida los campos del producto e inventario.
+    2) Crea primero el producto para obtener su id.
+    3) Crea después la entrada en inventario asociada a ese producto.
+    4) Cierra el modal y refresca el resumen para mostrar los cambios.
+  */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

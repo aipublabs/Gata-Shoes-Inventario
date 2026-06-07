@@ -11,6 +11,8 @@ import {
 import type { Categoria } from "../../types";
 
 const CategoriasPage = () => {
+  // Componente para gestionar el catálogo de categorías.
+  // Permite crear, editar y eliminar categorías desde una vista única.
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -67,6 +69,11 @@ const CategoriasPage = () => {
     setError("");
   };
 
+  /*
+    Guarda una categoría nueva o actualiza una existente.
+    Valida que el nombre no esté vacío y luego recarga la lista
+    para reflejar los cambios inmediatamente.
+  */
   const handleSave = async () => {
     const nombre = formNombre.trim();
     if (!nombre) {
@@ -90,6 +97,11 @@ const CategoriasPage = () => {
     }
   };
 
+  /*
+    Elimina la categoría seleccionada tras confirmar con el usuario.
+    Después de borrar, recarga el catálogo para que la interfaz muestre
+    la información actualizada sin necesidad de refrescar la página.
+  */
   const handleDelete = async (categoriaId: number) => {
     const confirmed = window.confirm("¿Desea eliminar esta categoría?");
     if (!confirmed) return;

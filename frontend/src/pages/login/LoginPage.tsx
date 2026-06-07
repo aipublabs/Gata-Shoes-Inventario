@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const LoginPage = () => {
+  // Componente de inicio de sesión que controla el acceso al sistema.
+  // Solo permite continuar si el usuario proporciona credenciales válidas.
   const navigate = useNavigate();
   const { login, isAuthenticated, isLoading } = useAuth();
 
@@ -12,6 +14,8 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({ correo: "", contrasena: "" });
 
+  // Si ya existe sesión activa, no debe mostrarse el login.
+  // Redirige automáticamente al dashboard para evitar volver a iniciar sesión.
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/resumen");
@@ -42,6 +46,11 @@ const LoginPage = () => {
     }
     
     try {
+      /*
+        Envía las credenciales al backend.
+        Si el login es correcto, el contexto de autenticación guardará el token
+        y la app navegará al dashboard.
+      */
       await login(correo.trim(), contrasena);
       navigate("/resumen");
     } catch (loginError) {

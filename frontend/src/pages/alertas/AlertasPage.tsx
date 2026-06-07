@@ -4,11 +4,18 @@ import { getAlertas, getInventario } from "../../api/axiosClient";
 import type { Inventario } from "../../types";
 
 const AlertasPage = () => {
+  // Componente que muestra alertas de stock y métricas generales del inventario.
+  // Combina la vista de productos críticos con indicadores de inventario total.
   const [alertas, setAlertas] = useState<Inventario[]>([]);
   const [todosInventario, setTodosInventario] = useState<Inventario[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+  /*
+    Carga los datos de alertas y del inventario completo en paralelo.
+    Se usan dos endpoints porque las alertas son un subconjunto de productos
+    con stock bajo, mientras que el inventario completo permite calcular métricas.
+  */
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -29,6 +36,8 @@ const AlertasPage = () => {
     fetchData();
   }, []);
 
+  // Métricas que resumen el estado del inventario completo.
+  // Estas cifras ayudan a priorizar acciones de reposición y control.
   const totalUnidades = todosInventario.reduce((acc, i) => acc + i.stock, 0);
   const alertasCriticas = alertas.length;
   const skusActivos = todosInventario.length;
@@ -47,28 +56,35 @@ const AlertasPage = () => {
     );
   });
 
+  /*
+    Clasifica el nivel de stock según reglas de negocio.
+    - Stock Crítico: 0 a 3 unidades.
+    - Bajo Stock: de 4 a 10 unidades.
+    - Stock Saludable: más de 10 unidades.
+    Esta función se usa para cambiar el color y la etiqueta de cada fila.
+  */
   const getNivel = (stock: number) => {
-  if (stock <= 3)
+    if (stock <= 3)
+      return {
+        label: "Stock Crítico",
+        className: "bg-red-600 text-white",
+        rowClass: "bg-secondary-container/30 hover:bg-secondary-container/50",
+        amountClass: "text-error font-bold",
+      };
+    if (stock <= 10)
+      return {
+        label: "Bajo Stock",
+        className: "bg-amber-100 text-amber-700",
+        rowClass: "bg-white hover:bg-surface-container-low",
+        amountClass: "text-amber-600 font-bold",
+      };
     return {
-      label: "Stock Crítico",
-      className: "bg-red-600 text-white",
-      rowClass: "bg-secondary-container/30 hover:bg-secondary-container/50",
-      amountClass: "text-error font-bold",
-    };
-  if (stock <= 10)
-    return {
-      label: "Bajo Stock",
-      className: "bg-amber-100 text-amber-700",
+      label: "Stock Saludable",
+      className: "bg-green-100 text-green-700",
       rowClass: "bg-white hover:bg-surface-container-low",
-      amountClass: "text-amber-600 font-bold",
+      amountClass: "text-on-surface font-bold",
     };
-  return {
-    label: "Stock Saludable",
-    className: "bg-green-100 text-green-700",
-    rowClass: "bg-white hover:bg-surface-container-low",
-    amountClass: "text-on-surface font-bold",
   };
-};
 
   if (isLoading) {
     return (
