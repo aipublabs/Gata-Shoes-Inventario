@@ -4,9 +4,6 @@ import LoginPage from "./pages/login/LoginPage";
 import ResumenPage from "./pages/resumen/ResumenPage";
 import InventarioPage from "./pages/inventario/InventarioPage";
 import CategoriasPage from "./pages/categorias/CategoriasPage";
-import ColoresPage from "./pages/colores/ColoresPage";
-import TallasPage from "./pages/tallas/TallasPage";
-import ProductosPage from "./pages/productos/ProductosPage";
 import AlertasPage from "./pages/alertas/AlertasPage";
 import { useAuth } from "./hooks/useAuth";
 
@@ -42,9 +39,6 @@ function App() {
             <Route path="/inventario" element={<InventarioPage />} />
             <Route path="/categorias" element={<CategoriasPage />} />
             <Route path="/alertas"    element={<AlertasPage />} />
-            <Route path="/colores"    element={<ColoresPage />} />
-            <Route path="/tallas"     element={<TallasPage />} />
-            <Route path="/productos"  element={<ProductosPage />} />
           </Route>
 
           {/* Redirecciones */}
