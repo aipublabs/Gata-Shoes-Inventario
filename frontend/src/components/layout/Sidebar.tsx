@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const navItems = [
-  { label: "Dashboard", path: "/resumen", icon: "dashboard" },
+  { label: "Panel de Control", path: "/resumen", icon: "dashboard" },
   { label: "Inventario", path: "/inventario", icon: "inventory_2" },
   { label: "Categorías", path: "/categorias", icon: "category" },
   { label: "Alertas Stock", path: "/alertas", icon: "warning", iconClass: "text-red-400" },

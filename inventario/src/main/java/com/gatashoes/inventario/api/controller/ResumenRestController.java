@@ -17,6 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para generación de resumen e indicadores del inventario.
+ * 
+ * Expone los endpoints para obtener estadísticas, métricas y alertas del inventario
+ * que se muestran en el panel de control (dashboard) de la aplicación.
+ * 
+ * Base URL: /api/v1
+ */
 @RestController
 @RequestMapping("/api/v1")
 @Validated
@@ -28,6 +36,17 @@ public class ResumenRestController {
     @Autowired
     private InventarioService inventarioService;
 
+    /**
+     * Obtiene el resumen completo del estado del inventario.
+     * 
+     * @return ResponseEntity con InventarioResumenResponse que contiene:
+     *         - Total de variantes
+     *         - Stock total disponible
+     *         - Cantidad de alertas de stock bajo
+     *         - Top 5 categorías con mayor stock
+     *         - Últimos 5 productos agregados
+     *         - Top 3 productos con mayor stock
+     */
     @GetMapping("/resumen")
     public ResponseEntity<InventarioResumenResponse> obtenerResumen() {
         ResumenData resumenData = resumenService.obtenerResumen();
@@ -52,6 +71,13 @@ public class ResumenRestController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Obtiene la lista de productos con stock crítico o bajo.
+     * 
+     * Los productos con stock <= 3 se consideran alertas de stock bajo.
+     * 
+     * @return ResponseEntity con lista de InventarioResponse de alertas
+     */
     @GetMapping("/alertas")
     public ResponseEntity<List<InventarioResponse>> listarAlertas() {
         List<InventarioResponse> responses = inventarioService.listarAlertas().stream()

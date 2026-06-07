@@ -29,6 +29,15 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador REST para gestión de inventario.
+ * 
+ * Expone los endpoints de la API REST para realizar operaciones CRUD sobre el inventario.
+ * Maneja las peticiones HTTP relacionadas con variantes de productos (combinaciones de
+ * producto, talla, color y cantidad de stock disponible).
+ * 
+ * Base URL: /api/v1/inventario
+ */
 @RestController
 @RequestMapping("/api/v1/inventario")
 @Validated
@@ -46,6 +55,14 @@ public class InventarioRestController {
     @Autowired
     private ColorService colorService;
 
+    /**
+     * Obtiene la lista de inventario con paginación opcional.
+     * 
+     * @param page Número de página (opcional, comienza en 0)
+     * @param size Cantidad de registros por página (opcional)
+     * @return ResponseEntity con lista de InventarioResponse
+     * @see InventarioResponse
+     */
     @GetMapping
     public ResponseEntity<List<InventarioResponse>> listarInventario(
             @RequestParam(required = false) Integer page,
@@ -71,12 +88,28 @@ public class InventarioRestController {
         return ResponseEntity.ok(responses);
     }
 
+    /**
+     * Obtiene un registro de inventario específico por su ID.
+     * 
+     * @param id Identificador único del inventario
+     * @return ResponseEntity con InventarioResponse del registro solicitado
+     * @throws ResourceNotFoundException si el inventario no existe
+     */
     @GetMapping("/{id}")
     public ResponseEntity<InventarioResponse> obtenerInventarioPorId(@PathVariable Integer id) {
         Inventario inventario = inventarioService.obtenerInventarioPorIdOrThrow(id);
         return ResponseEntity.ok(InventarioMapper.toResponse(inventario));
     }
 
+    /**
+     * Crea un nuevo registro de inventario.
+     * 
+     * Valida que el producto, talla y color existan antes de crear el registro.
+     * 
+     * @param request InventarioRequest con datos del nuevo inventario
+     * @return ResponseEntity con InventarioResponse y estado HTTP 201 (CREATED)
+     * @throws ResourceNotFoundException si producto, talla o color no existen
+     */
     @PostMapping
     public ResponseEntity<InventarioResponse> crearInventario(@RequestBody @Valid InventarioRequest request) {
         Producto producto = productoService.obtenerProductoPorIdOrThrow(request.idProducto());
@@ -94,6 +127,14 @@ public class InventarioRestController {
                 .body(InventarioMapper.toResponse(inventarioGuardado));
     }
 
+    /**
+     * Actualiza un registro de inventario existente.
+     * 
+     * @param id Identificador único del inventario a actualizar
+     * @param request InventarioRequest con los datos actualizados
+     * @return ResponseEntity con InventarioResponse actualizado
+     * @throws ResourceNotFoundException si el inventario no existe
+     */
     @PutMapping("/{id}")
     public ResponseEntity<InventarioResponse> actualizarInventario(
             @PathVariable Integer id,
@@ -113,6 +154,13 @@ public class InventarioRestController {
         return ResponseEntity.ok(InventarioMapper.toResponse(inventarioActualizado));
     }
 
+    /**
+     * Elimina un registro de inventario.
+     * 
+     * @param id Identificador único del inventario a eliminar
+     * @return ResponseEntity vacío con estado HTTP 204 (NO_CONTENT)
+     * @throws ResourceNotFoundException si el inventario no existe
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarInventario(@PathVariable Integer id) {
         inventarioService.eliminarInventario(id);

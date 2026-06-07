@@ -22,6 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import java.time.Duration;
 
+/**
+ * Controlador REST para autenticación y gestión de sesiones.
+ * 
+ * Expone los endpoints para que los usuarios administradores se autentiquen
+ * en la aplicación. Utiliza tokens JWT para mantener sesiones seguras y
+ * stateless. Los tokens se almacenan en localStorage en el navegador del cliente.
+ * 
+ * Base URL: /api/v1/auth
+ */
 @RestController
 @RequestMapping("/api/v1/auth")
 @Validated
@@ -36,6 +45,18 @@ public class AuthRestController {
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * Autentica un usuario administrador y genera tokens JWT.
+     * 
+     * Valida las credenciales (correo y contraseña) del administrador.
+     * Si son correctas, genera:
+     * - Access Token: Válido por 15 minutos, se usa en Authorization header
+     * - Refresh Token: Válido por 7 días, se almacena en cookie HttpOnly
+     * 
+     * @param request LoginRequest con correo y contraseña del administrador
+     * @return ResponseEntity con LoginResponse (token, ID, nombre, correo) y cookie de refresh
+     * @throws AuthenticationException si las credenciales son inválidas
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         Administrador admin = authService.autenticar(request.correo(), request.contrasena());
@@ -61,6 +82,17 @@ public class AuthRestController {
                 .body(response);
     }
 
+    /**
+     * Refresca el access token usando el refresh token.
+     * 
+     * Cuando el access token expire, el cliente puede usar este endpoint
+     * para obtener un nuevo access token sin volver a hacer login.
+     * El refresh token se envía automáticamente en cookies.
+     * 
+     * @param refreshToken Token de refresco enviado en cookie
+     * @return ResponseEntity con nuevo access token si es válido
+     * @throws UnauthorizedException si el refresh token es inválido o está expirado
+     */
     @PostMapping("/refresh")
     public ResponseEntity<Object> refresh(
             @CookieValue(value = "refresh_token", required = false) String refreshToken) {
@@ -79,6 +111,14 @@ public class AuthRestController {
         return ResponseEntity.ok().body(java.util.Map.of("accessToken", accessToken));
     }
 
+    /**
+     * Cierra la sesión del usuario.
+     * 
+     * Invalida el refresh token eliminando la cookie, forzando al cliente
+     * a autenticarse nuevamente la próxima vez que su access token expire.
+     * 
+     * @return ResponseEntity vacío con estado HTTP 200 (OK) y cookie expirada
+     */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout() {
         ResponseCookie cookie = ResponseCookie.from("refresh_token", "")

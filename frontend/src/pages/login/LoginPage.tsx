@@ -25,22 +25,27 @@ const LoginPage = () => {
 
     // Validación manual en español
     if (!correo.trim()) {
-      setErrors((e) => ({ ...e, correo: "El correo es obligatorio" }));
+      setErrors((e) => ({ ...e, correo: "El correo electrónico es obligatorio." }));
       return;
     }
-    if (!correo.includes("@")) {
-      setErrors((e) => ({ ...e, correo: "Ingresa un correo válido" }));
+    
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(correo.trim())) {
+      setErrors((e) => ({ ...e, correo: "Ingresa un correo electrónico válido." }));
       return;
     }
+    
     if (!contrasena.trim()) {
-      setErrors((e) => ({ ...e, contrasena: "La contraseña es obligatoria" }));
+      setErrors((e) => ({ ...e, contrasena: "La contraseña es obligatoria." }));
       return;
     }
+    
     try {
       await login(correo.trim(), contrasena);
       navigate("/resumen");
     } catch (loginError) {
-      setError("Correo o contraseña incorrectos. Por favor verifica los datos e intenta nuevamente.");
+      setError("Credenciales incorrectas. Inténtelo de nuevo.")
     }
   };
 
@@ -71,7 +76,7 @@ const LoginPage = () => {
               <span className="material-symbols-outlined text-slate-500">mail</span>
               <input
                 id="correo"
-                type="email"
+                type="text"
                 value={correo}
                 onChange={(event) => {
                   setCorreo(event.target.value);
