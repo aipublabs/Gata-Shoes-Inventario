@@ -6,9 +6,8 @@ Sistema web de gestión de inventario para Gata Shoes con arquitectura REST API 
 
 ### Backend
 - **Java 17** + **Spring Boot 3.3.5**
-- **Spring Security** con JWT (JSON Web Tokens)
 - **Spring Data JPA** + **Hibernate 6.5.3**
-- **MySQL 8.0** (vía Docker)
+- **MySQL 8.0**
 - Maven para gestión de dependencias
 
 ### Frontend
@@ -25,14 +24,6 @@ Sistema web de gestión de inventario para Gata Shoes con arquitectura REST API 
 - Node.js 18+ / npm 10+
 - MySQL 8.0 (Docker recomendado)
 - Git
-
-### Base de datos (Docker)
-
-```bash
-docker run --name mysql-gata -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=inventario_db -p 3306:3306 \
-  -d mysql:8.0
-```
 
 ### Backend
 
@@ -59,7 +50,6 @@ Frontend estará disponible en: **http://localhost:5173**
 |-----------|-----|
 | Frontend | http://localhost:5173 |
 | Backend API | http://localhost:8081/api/v1 |
-| Swagger API (si está habilitado) | http://localhost:8081/swagger-ui.html |
 
 ### Credenciales de Prueba
 - **Correo**: admin@gatashoes.com
@@ -144,10 +134,7 @@ Gata-Shoes-Inventario/
 - ✅ Autenticación JWT
 - ✅ Dashboard (Resumen con métricas, gráficos, últimas novedades)
 - ✅ Gestión de Categorías
-- ✅ Gestión de Colores
-- ✅ Gestión de Tallas
 - ✅ Gestión de Productos
-- ✅ Gestión de Inventario (variantes por color/talla)
 - ✅ Alertas de Stock Bajo
 - ✅ Interfaz responsive con Tailwind CSS
 
