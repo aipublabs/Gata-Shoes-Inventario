@@ -7,13 +7,18 @@ import CategoriasPage from "./pages/categorias/CategoriasPage";
 import ColoresPage from "./pages/colores/ColoresPage";
 import TallasPage from "./pages/tallas/TallasPage";
 import ProductosPage from "./pages/productos/ProductosPage";
+import AlertasPage from "./pages/alertas/AlertasPage";
 import { useAuth } from "./hooks/useAuth";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Cargando...
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -28,17 +33,23 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Ruta pública */}
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Rutas protegidas */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/resumen" element={<ResumenPage />} />
+            <Route path="/resumen"    element={<ResumenPage />} />
             <Route path="/inventario" element={<InventarioPage />} />
             <Route path="/categorias" element={<CategoriasPage />} />
-            <Route path="/colores" element={<ColoresPage />} />
-            <Route path="/tallas" element={<TallasPage />} />
-            <Route path="/productos" element={<ProductosPage />} />
+            <Route path="/alertas"    element={<AlertasPage />} />
+            <Route path="/colores"    element={<ColoresPage />} />
+            <Route path="/tallas"     element={<TallasPage />} />
+            <Route path="/productos"  element={<ProductosPage />} />
           </Route>
-          <Route path="/" element={<Navigate to="/resumen" replace />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+
+          {/* Redirecciones */}
+          <Route path="/"  element={<Navigate to="/resumen" replace />} />
+          <Route path="*"  element={<Navigate to="/login"   replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
