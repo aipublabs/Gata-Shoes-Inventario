@@ -1,446 +1,243 @@
-# Gata Shoes — Sistema de Inventario
+# Evidencia GA7-220501096-AA5-EV01
 
-Sistema web de gestión de inventario para Gata Shoes con arquitectura REST API + Frontend React.
+## 1. Información general
 
-## Stack Tecnológico
+- **Evidencia:** GA7-220501096-AA5-EV01
+- **Nombre:** Diseño y desarrollo de servicios web, caso
+- **Proyecto:** Gata Shoes, Sistema de Inventario
+- **Backend:** Spring Boot 3.3.5 y Java 17
+- **Base de datos:** MySQL 8
+- **Seguridad:** Spring Security, JWT y BCrypt
+- **Rama:** feature/GA7-220501096-AA5-EV01
+- **Commit principal de implementación:** e64372a
 
-### Backend
-- **Java 17** + **Spring Boot 3.3.5**
-- **Spring Data JPA** + **Hibernate 6.5.3**
-- **MySQL 8.0**
-- Maven para gestión de dependencias
+## 2. Objetivo
 
-### Frontend
-- **React 18** + **TypeScript**
-- **Vite** (build tool)
-- **Tailwind CSS** para estilos
-- **Axios** para llamadas API
-- **React Router** para navegación
+El objetivo es implementar y verificar servicios web reutilizables para:
 
-## 📖 Historias de Usuario
+- Registrar administradores con validación de datos y cifrado de contraseñas
+- Iniciar sesión de administradores validando credenciales
+- Validar los datos de entrada mediante Bean Validation
+- Asegurar las contraseñas utilizando BCrypt
+- Controlar errores mediante excepciones específicas y códigos HTTP estándar
+- Utilizar Git y GitHub para versionar el código durante todo el proceso de desarrollo
 
-| HU | Título | Módulo Frontend | Endpoint Backend |
-|----|--------|-----------------|-----------------|
-| HU-01 | Autenticación de usuario | LoginPage.tsx | POST /api/v1/auth/login |
-| HU-02 | Tablero de Control (Dashboard) | ResumenPage.tsx | GET /api/v1/resumen |
-| HU-03 | Registro de nuevas variantes | ResumenPage.tsx (Modal) | POST /api/v1/productos + POST /api/v1/inventario |
-| HU-04 | Auditoría de ingresos recientes | ResumenPage.tsx (Nuevos Ingresos) | GET /api/v1/resumen (novedades) |
-| HU-05 | Ajuste manual de stock | InventarioPage.tsx | PUT /api/v1/inventario/{id} / DELETE /api/v1/inventario/{id} |
-| HU-06 | Administración de categorías | CategoriasPage.tsx | GET/POST/PUT/DELETE /api/v1/categorias |
+## 3. Criterios de evaluación
 
-### Descripción detallada de Historias de Usuario
+| Criterio | Estado | Descripción |
+|----------|--------|-------------|
+| Servicio web para registro | Cumplido | Se implementó endpoint POST /api/v1/auth/registro que permite registrar administradores con validación de datos y cifrado de contraseña. La respuesta HTTP es 201 Created y no expone la contraseña. |
+| Servicio web para inicio de sesión | Cumplido | Se implementó endpoint POST /api/v1/auth/login que autentica administradores validando correo y contraseña. La respuesta HTTP es 200 OK y retorna access token, idAdmin, nombre y correo. |
+| Validaciones de verificación | Cumplido | Se implementaron validaciones mediante Bean Validation (@NotBlank, @Email, @Size) y verificación de duplicados mediante existsByCorreoIgnoreCase(). Códigos HTTP: 400 para datos inválidos, 409 para correo duplicado, 401 para credenciales inválidas. |
+| Herramientas de versionamiento | Cumplido | Se utilizó Git como sistema de control de versiones y GitHub como repositorio remoto. Todos los cambios fueron desarrollados en la rama feature/GA7-220501096-AA5-EV01 y consolidados en el commit e64372a. |
 
-**HU-01: Autenticación de usuario**
-Como Encargado de Bodega, necesito ingresar mis credenciales para restringir el acceso al sistema de inventarios.
-- Implementada con: Spring Security + JWT (access token 15 min + refresh token 7 días en HttpOnly cookie) + ProtectedRoute en React
-- Campos: email (validación regex en español) + contraseña
-- Respuesta: access_token (Bearer) + refresh_token (HttpOnly cookie)
+## 4. Servicio web de registro
 
-**HU-02: Tablero de Control (Dashboard)**
-Como Administrador, necesito un panel centralizado con KPIs (variantes, stock total, alertas), gráfico de distribución por categoría, panel de novedades y tabla Top 3 mayor stock.
-- Endpoint: GET /api/v1/resumen (retorna ResumenData con 6 métricas)
-- Componentes visuales: MetricCard (KPIs), gráfico de pastel, tabla de novedades, top stock
+### Especificación
 
-**HU-03: Registro de nuevas variantes**
-Como Encargado de Inventario, necesito un formulario para dar de alta nuevos modelos con nombre, categoría, precio, talla, color, stock inicial e imagen.
-- Crea registro en Producto table e Inventario table
-- Requiere: nombre, descripción, precio, categoría, talla, color, stock inicial, urlImagen
-- Modal en ResumenPage con validación de campos
+- **Método:** POST
+- **Endpoint:** /api/v1/auth/registro
+- **Acceso:** Público mediante /api/v1/auth/**
+- **Content-Type:** application/json
 
-**HU-04: Auditoría de ingresos recientes**
-Como Auditor, necesito ver los últimos 5 artículos ingresados ordenados por idInventario descendente para validar contra planillas físicas.
-- Endpoint: GET /api/v1/resumen → novedades (últimos 5)
-- Tabla con columnas: Producto, Talla, Color, Stock, Fecha
-- Ordenamiento: descendente por ID
+### Solicitud
 
-**HU-05: Ajuste manual de stock**
-Como Encargado de Bodega, necesito ajustar stock con tres modos: Añadir, Restar o Fijar Total.
-- Si el stock llega a 0 la variante se elimina del inventario conservando el producto en el catálogo
-- Endpoints: PUT /api/v1/inventario/{id} (actualizar) + DELETE /api/v1/inventario/{id} (eliminar si es 0)
-- Modal con opciones de operación y cantidad
-
-**HU-06: Administración de categorías**
-Como Administrador, necesito gestionar categorías (CRUD completo) con formulario modal, validaciones y actualización automática del listado.
-- CRUD completo: GET, POST, PUT, DELETE
-- Interfaz: tabla de categorías + modal de edición/creación
-- Validaciones: nombre no vacío, máximo 50 caracteres
-
----
-
-## 📊 Diagrama de Clases
-
-```mermaid
-classDiagram
-    class Administrador {
-        int idAdmin
-        string nombre
-        string correo
-        string contrasena
-        +listarAdministradores()
-        +obtenerPorId(int)
-        +guardar(Administrador)
-        +actualizar(Administrador)
-        +eliminar(int)
-    }
-
-    class Categoria {
-        int idCategoria
-        string nombreCategoria
-        +listarCategorias()
-        +guardarCategoria(Categoria)
-        +obtenerCategoriaPorId(int)
-        +actualizarCategoria(Categoria)
-        +eliminarCategoria(int)
-    }
-
-    class Color {
-        int idColor
-        string nombreColor
-        +listarColores()
-        +guardarColor(Color)
-        +obtenerColorPorId(int)
-        +actualizarColor(Color)
-        +eliminarColor(int)
-    }
-
-    class Talla {
-        int idTalla
-        int numero
-        +listarTallas()
-        +guardarTalla(Talla)
-        +obtenerTallaPorId(int)
-        +actualizarTalla(Talla)
-        +eliminarTalla(int)
-    }
-
-    class Producto {
-        int idProducto
-        string nombre
-        string descripcion
-        decimal precio
-        string urlImagen
-        +listarProductos()
-        +guardarProducto(Producto)
-        +obtenerProductoPorId(int)
-        +actualizarProducto(Producto)
-        +eliminarProducto(int)
-    }
-
-    class Inventario {
-        int idInventario
-        int stock
-        +listarInventario()
-        +guardarInventario(Inventario)
-        +obtenerInventarioPorId(int)
-        +actualizarInventario(Inventario)
-        +eliminarInventario(int)
-        +listarAlertas()
-        +listarNovedades()
-        +listarTopStock()
-    }
-
-    class JwtService {
-        string SECRET_KEY
-        +generateAccessToken(Administrador)
-        +generateRefreshToken(Administrador)
-        +extractCorreo(string)
-        +isTokenValid(string)
-    }
-
-    class JwtAuthenticationFilter {
-        +doFilterInternal(HttpServletRequest, HttpServletResponse, FilterChain)
-    }
-
-    Producto "N" --> "1" Categoria
-    Inventario "N" --> "1" Producto
-    Inventario "N" --> "1" Talla
-    Inventario "N" --> "1" Color
-    JwtAuthenticationFilter --> JwtService
+```json
+{
+  "nombre": "Usuario Prueba",
+  "correo": "usuario.prueba@example.com",
+  "contrasena": "ClaveSegura123"
+}
 ```
 
----
+### Respuesta exitosa (HTTP 201)
 
-## 🔧 Estándares de Codificación
-
-### Backend (Java - Spring Boot)
-
-#### Nomenclatura
-
-- **Clases**: PascalCase (ej: `InventarioService`, `CategoriaMapper`)
-- **Métodos y variables**: camelCase (ej: `listarCategorias`, `idInventario`)
-- **Constantes**: UPPER_SNAKE_CASE (ej: `ACCESS_TOKEN_EXPIRATION`)
-- **Paquetes**: minúsculas con puntos (ej: `com.gatashoes.inventario.api.controller`)
-
-#### Estructura de paquetes (Arquitectura en capas)
-
-```
-com.gatashoes.inventario/
-├── api/
-│   ├── controller/      → @RestController — expone endpoints REST
-│   ├── dto/
-│   │   ├── request/     → DTOs de entrada (lo que recibe la API)
-│   │   └── response/    → DTOs de salida (lo que retorna la API)
-│   ├── exception/       → Manejo global de errores (@RestControllerAdvice)
-│   ├── mapper/          → Conversión Entity ↔ DTO (métodos estáticos)
-│   └── security/        → JWT Filter, JWT Service, Auth Service
-├── config/              → Configuración Spring (SecurityConfig)
-├── model/               → Entidades JPA (@Entity)
-├── repository/          → Interfaces JPA (@Repository)
-└── service/             → Lógica de negocio (@Service)
+```json
+{
+  "idAdmin": 2,
+  "nombre": "Usuario Prueba",
+  "correo": "usuario.prueba@example.com"
+}
 ```
 
-#### Principios aplicados
+### Comportamiento
 
-- **Single Responsibility**: Cada clase tiene una única responsabilidad
-- **DTO Pattern**: Los Controllers nunca exponen Entities directamente
-- **Repository Pattern**: Acceso a datos exclusivamente a través de JpaRepository
-- **Stateless**: Sin sesiones HTTP — autenticación basada en JWT
-- **CORS centralizado**: Configurado en SecurityConfig, no en cada Controller
+- **HTTP 201 Created:** Registro exitoso
+- **HTTP 400 Bad Request:** Datos de entrada inválidos (nombre vacío, correo con formato inválido, contraseña menor a 8 caracteres)
+- **HTTP 409 Conflict:** Correo duplicado
+- **Seguridad:** La respuesta no contiene contraseña, password ni hash
+- **Cifrado:** La contraseña se cifra utilizando PasswordEncoder con algoritmo BCrypt existente
+- **Normalización:** 
+  - El nombre se normaliza eliminando espacios externos con `.trim()`
+  - El correo se normaliza eliminando espacios externos y convirtiéndolo a minúsculas con `.toLowerCase(Locale.ROOT)`
+- **Validación de duplicados:** Se utiliza `existsByCorreoIgnoreCase()` para verificar que el correo no esté registrado
+- **Delegación:** El endpoint delega la lógica completa de registro en `AdministradorService`
 
-#### Convenciones de métodos en Services
+### Consideración técnica identificada
 
-- `listar[Entidad]s()` → retorna `List`
-- `obtener[Entidad]PorId(id)` → retorna `Entidad` o `null`
-- `obtener[Entidad]PorIdOrThrow(id)` → retorna `Entidad` o lanza `ResourceNotFoundException`
-- `guardar(Entidad)` → retorna `Entidad` guardada
-- `actualizar(Entidad)` → retorna `Entidad` actualizada
-- `eliminar(int id)` → `void`, valida existencia antes de eliminar
+Bean Validation se ejecuta antes de la normalización del servicio. Por esta razón, el correo de entrada debe tener un formato válido y no debe incluir espacios externos. Esta es una consideración técnica identificada durante la validación. El correo debe enviarse sin espacios al inicio o al final, debido a que Bean Validation se ejecuta antes de la normalización realizada por el servicio.
 
-#### Manejo de errores
+## 5. Servicio web de inicio de sesión
 
-- `ResourceNotFoundException` → HTTP 404
-- `MethodArgumentNotValidException` → HTTP 400 con detalle por campo
-- `Exception` genérica → HTTP 500
-- Formato estándar: `{ timestamp, status, error, message, path }`
+### Especificación
 
-### Frontend (React + TypeScript)
+- **Método:** POST
+- **Endpoint:** /api/v1/auth/login
+- **Acceso:** Público
+- **Content-Type:** application/json
 
-#### Nomenclatura
+### Solicitud
 
-- **Componentes**: PascalCase (ej: `ResumenPage`, `MetricCard`, `MainLayout`)
-- **Hooks**: camelCase con prefijo "use" (ej: `useAuth`, `useState`)
-- **Funciones**: camelCase (ej: `fetchResumen`, `handleSubmit`)
-- **Constantes**: camelCase (ej: `accessToken`, `authUser`)
-- **Archivos de componentes**: PascalCase.tsx
-- **Archivos de utilidades**: camelCase.ts
-
-#### Estructura de carpetas
-
-```
-frontend/src/
-├── api/             → axiosClient.ts — cliente HTTP centralizado
-├── components/
-│   ├── layout/      → Sidebar, TopBar, MainLayout (componentes transversales)
-│   └── ui/          → Button, Modal, MetricCard, PageHeader (componentes reutilizables)
-├── contexts/        → AuthContext.tsx — estado global de autenticación
-├── hooks/           → useAuth.ts — hooks personalizados
-├── pages/           → Una carpeta por página (LoginPage, ResumenPage, etc.)
-└── types/           → index.ts — interfaces TypeScript del dominio
+```json
+{
+  "correo": "usuario.prueba@example.com",
+  "contrasena": "ClaveSegura123"
+}
 ```
 
-#### Principios aplicados
+### Respuesta exitosa (HTTP 200)
 
-- **Componentes reutilizables**: Sidebar, TopBar y MainLayout son transversales
-- **Context API**: Estado de autenticación centralizado en AuthContext
-- **TypeScript estricto**: Todas las interfaces definidas en `types/index.ts`
-- **Separación de responsabilidades**:
-  - `pages/` → lógica de negocio y estado local
-  - `components/` → presentación y reutilización
-  - `api/` → llamadas HTTP centralizadas
-- **Interceptores Axios**: Token JWT agregado automáticamente en cada request
-- **Validación en cliente**: Validaciones en español antes de llamar al backend
+- **HTTP 200 OK:** Autenticación exitosa
+- **Contenido:** access token (no se muestra en esta documentación), idAdmin, nombre y correo
+- **Seguridad:** La respuesta no contiene la contraseña
 
-#### Convenciones de componentes
+### Comportamiento de credenciales inválidas
 
-- Props tipadas con interface TypeScript
-- Estados locales con `useState`
-- Efectos secundarios con `useEffect`
-- Formularios con estado controlado (controlled components)
-- Nombres de handlers: `handle[Acción]` (ej: `handleSubmit`, `handleDelete`)
-- Nombres de fetchers: `fetch[Entidad]` (ej: `fetchProductos`, `fetchResumen`)
+- **HTTP 401 Unauthorized:** Correo inexistente o contraseña incorrecta
+- **Mensaje:** "Credenciales inválidas"
+- **Seguridad:** El servicio no revela si falló el correo o la contraseña, brindando igual seguridad para ambos casos
 
----
+### Proceso de verificación
 
-## Instalación y Ejecución
+- La contraseña se verifica utilizando `PasswordEncoder.matches()` con BCrypt
+- Se mantiene compatibilidad con contraseñas sin cifrar de migraciones anteriores, cifrándolas automáticamente al verificar éxito
 
-### Requisitos previos
-- Java 17+
-- Node.js 18+ / npm 10+
-- MySQL 8.0 (Docker recomendado)
-- Git
+## 6. Validaciones implementadas
 
-### Backend
+| Escenario | Resultado verificado | Observaciones |
+|-----------|----------------------|--------------|
+| **Registro exitoso** | HTTP 201 | Devuelve idAdmin, nombre y correo sin exponer contraseña |
+| **Inicio de sesión exitoso** | HTTP 200 | Devuelve los datos del administrador y confirma la existencia del access token (no mostrado) |
+| **Correo duplicado** | HTTP 409 Conflict | Mensaje: "El correo ya se encuentra registrado" |
+| **Correo con formato inválido** | HTTP 400 Bad Request | Valor utilizado: "correo-invalido" → Mensaje: "El correo debe tener un formato válido" |
+| **Contraseña menor a 8 caracteres** | HTTP 400 Bad Request | Valor utilizado: "Abc123" → Mensaje: "La contraseña debe tener entre 8 y 255 caracteres" |
+| **Campos vacíos** | HTTP 400 Bad Request | Se recibieron mensajes para nombre, correo y contraseña obligatorios. Una contraseña vacía puede producir simultáneamente los mensajes de @NotBlank y @Size, porque incumple ambas reglas. |
+| **Credenciales incorrectas** | HTTP 401 Unauthorized | Error: "No Autorizado" → Mensaje: "Credenciales inválidas" |
+| **Cifrado de contraseña** | Verificado en MySQL | Prefijo observado: $2a$ → Longitud observada: 60 caracteres → Esto confirma el almacenamiento mediante BCrypt |
+| **Limpieza de datos de prueba** | Confirmado | El usuario temporal utilizado en la validación fue eliminado de MySQL. Se confirmó que quedaron cero registros para ese usuario. |
 
-```bash
-cd inventario
-.\mvnw.cmd spring-boot:run
-```
+## 7. Archivos relacionados con la evidencia
 
-Backend estará disponible en: **http://localhost:8081**
+El commit e64372a modificó o creó exactamente estos ocho archivos:
 
-### Frontend
+1. **inventario/src/main/java/com/gatashoes/inventario/api/controller/AuthRestController.java**
+   - Controlador REST que expone los endpoints `/login`, `/refresh`, `/logout` y `/registro`
+   - Recibe solicitudes, delega en servicios y retorna respuestas con códigos HTTP apropiados
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+2. **inventario/src/main/java/com/gatashoes/inventario/api/dto/request/RegistroRequest.java**
+   - DTO para recibir datos de registro
+   - Incluye validaciones mediante Bean Validation: @NotBlank, @Email, @Size
+   - Todos los mensajes de validación están en español
 
-Frontend estará disponible en: **http://localhost:5173**
+3. **inventario/src/main/java/com/gatashoes/inventario/api/exception/CorreoDuplicadoException.java**
+   - Excepción específica para correos duplicados
+   - Permite retornar HTTP 409 Conflict de forma diferenciada
 
-## URLs y Acceso
+4. **inventario/src/main/java/com/gatashoes/inventario/api/exception/CredencialesInvalidasException.java**
+   - Excepción específica para credenciales inválidas
+   - Permite retornar HTTP 401 Unauthorized de forma diferenciada
 
-| Componente | URL |
-|-----------|-----|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:8081/api/v1 |
+5. **inventario/src/main/java/com/gatashoes/inventario/api/exception/GlobalExceptionHandler.java**
+   - Manejador centralizado de excepciones mediante @RestControllerAdvice
+   - Convierte excepciones en respuestas ErrorResponse con códigos HTTP estándar
+   - Maneja: ResourceNotFoundException, MethodArgumentNotValidException, CorreoDuplicadoException, CredencialesInvalidasException, Exception
 
-### Credenciales de Prueba
-- **Correo**: admin@gatashoes.com
-- **Contraseña**: 123456
+6. **inventario/src/main/java/com/gatashoes/inventario/api/security/AuthService.java**
+   - Servicio que realiza la autenticación
+   - Valida correo y contraseña
+   - Lanza CredencialesInvalidasException sin revelar cuál dato falló
+   - Mantiene compatibilidad con contraseñas sin cifrar, cifrándolas automáticamente
 
-## Endpoints REST Principales
+7. **inventario/src/main/java/com/gatashoes/inventario/repository/AdministradorRepository.java**
+   - Repositorio JPA para Administrador
+   - Agrega método `existsByCorreoIgnoreCase()` para verificación de duplicados case-insensitive
 
-### Autenticación
-- `POST /api/v1/auth/login` — Login
+8. **inventario/src/main/java/com/gatashoes/inventario/service/AdministradorService.java**
+   - Servicio que contiene la lógica de negocio para administradores
+   - Agrega método `registrarAdministrador()` que normaliza datos, verifica duplicados, cifra contraseña y persiste
 
-### Categorías
-- `GET /api/v1/categorias` — Listar
-- `POST /api/v1/categorias` — Crear
-- `PUT /api/v1/categorias/{id}` — Actualizar
-- `DELETE /api/v1/categorias/{id}` — Eliminar
-
-### Colores
-- `GET /api/v1/colores` — Listar
-- `POST /api/v1/colores` — Crear
-- `PUT /api/v1/colores/{id}` — Actualizar
-- `DELETE /api/v1/colores/{id}` — Eliminar
-
-### Tallas
-- `GET /api/v1/tallas` — Listar
-- `POST /api/v1/tallas` — Crear
-- `PUT /api/v1/tallas/{id}` — Actualizar
-- `DELETE /api/v1/tallas/{id}` — Eliminar
-
-### Productos
-- `GET /api/v1/productos` — Listar
-- `POST /api/v1/productos` — Crear
-- `PUT /api/v1/productos/{id}` — Actualizar
-- `DELETE /api/v1/productos/{id}` — Eliminar
-
-### Inventario
-- `GET /api/v1/inventario` — Listar variantes
-- `POST /api/v1/inventario` — Crear variante
-- `PUT /api/v1/inventario/{id}` — Actualizar
-- `DELETE /api/v1/inventario/{id}` — Eliminar
-
-### Resumen y Alertas
-- `GET /api/v1/resumen` — Dashboard (totales, novedades, top stock)
-- `GET /api/v1/alertas` — Stock bajo (≤ 3 unidades)
-
-## Estructura del Proyecto
+## 8. Flujo del servicio de registro
 
 ```
-Gata-Shoes-Inventario/
-├── inventario/                          # Backend (Spring Boot)
-│   ├── src/main/java/com/gatashoes/inventario/
-│   │   ├── api/
-│   │   │   ├── controller/             # REST Controllers
-│   │   │   ├── dto/                    # Data Transfer Objects
-│   │   │   ├── security/               # JWT & Security
-│   │   │   └── exception/              # Global error handling
-│   │   ├── config/                     # Configuration (Security, CORS)
-│   │   ├── model/                      # JPA Entities
-│   │   ├── repository/                 # Data Access Layer
-│   │   └── service/                    # Business Logic
-│   ├── pom.xml
-│   └── mvnw / mvnw.cmd                 # Maven wrapper
-│
-├── frontend/                            # Frontend (React)
-│   ├── src/
-│   │   ├── pages/                      # Page components
-│   │   ├── components/                 # Reusable components
-│   │   ├── api/                        # Axios client & endpoints
-│   │   ├── contexts/                   # Auth context
-│   │   ├── hooks/                      # Custom hooks
-│   │   ├── types/                      # TypeScript types
-│   │   └── App.tsx                     # Routing & layout
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── tailwind.config.js
-│
-└── README.md                            # Este archivo
+Cliente HTTP
+    ↓
+AuthRestController (recibe solicitud, valida anotación @Valid)
+    ↓
+RegistroRequest y Bean Validation (valida formato, obligatoriedad, tamaños)
+    ↓
+AdministradorService.registrarAdministrador() (normaliza, verifica, cifra, persiste)
+    ↓
+AdministradorRepository (accede a base de datos MySQL)
+    ↓
+MySQL (almacena registro)
+    ↓
+AdministradorMapper (convierte entidad a DTO sin contraseña)
+    ↓
+AdministradorResponse (retorna al cliente)
+    ↓
+Cliente HTTP (recibe HTTP 201 con datos públicos)
 ```
 
-## Características Principales
+### Responsabilidades por capa
 
-### Módulos Implementados
-- ✅ Autenticación JWT
-- ✅ Dashboard (Resumen con métricas, gráficos, últimas novedades)
-- ✅ Gestión de Categorías
-- ✅ Gestión de Productos
-- ✅ Alertas de Stock Bajo
-- ✅ Interfaz responsive con Tailwind CSS
+- **AuthRestController:** Recibe solicitudes HTTP, valida con @Valid, delega en servicios, retorna ResponseEntity con código HTTP y cuerpo
+- **Bean Validation:** Valida formato, obligatoriedad, rangos de valores antes de ser procesados por el servicio
+- **AdministradorService:** Normaliza datos (trim, toLowerCase), verifica duplicados, cifra contraseña, captura excepciones específicas
+- **AdministradorRepository:** Accede a base de datos, ejecuta consultas, persiste cambios
+- **GlobalExceptionHandler:** Convierte excepciones de negocio en respuestas HTTP con ErrorResponse estandarizado
+- **AdministradorMapper:** Convierte entidades JPA a DTOs de respuesta, excluye datos sensibles
 
-## Seguridad
+## 9. Códigos HTTP
 
-- **CORS**: Configurado para `http://localhost:5173`
-- **JWT**: Token Bearer en header `Authorization`
-- **Session**: STATELESS (sin sesiones de servidor)
-- **Endpoints protegidos**: `/api/v1/**` requiere autenticación
-- **Endpoints públicos**: `/api/v1/auth/**`
+- **200 OK:** Inicio de sesión correcto. Contiene access token, idAdmin, nombre y correo
+- **201 Created:** Registro correcto. Contiene idAdmin, nombre y correo (sin contraseña)
+- **400 Bad Request:** Datos de entrada inválidos. Causa: formato de correo inválido, contraseña menor a 8 caracteres, campos vacíos. Mensaje en español de la validación que falló
+- **401 Unauthorized:** Credenciales inválidas. Causa: correo inexistente o contraseña incorrecta. Mensaje: "Credenciales inválidas"
+- **409 Conflict:** Correo duplicado. Causa: el correo ya está registrado. Mensaje: "El correo ya se encuentra registrado"
+- **500 Internal Server Error:** Error no controlado en el servidor
 
-## Desarrollo
+## 10. Comentarios y estándares de codificación
 
-### Scripts útiles
+Se conservaron los estándares existentes del proyecto Gata Shoes:
 
-#### Backend
-```bash
-# Compilar
-./mvnw clean compile
+- **Convención de nombres:** Clases en PascalCase, métodos y variables en camelCase, paquetes en minúsculas
+- **Arquitectura:** Organización por capas (controller → service → repository)
+- **DTOs:** Uso de records de Java para entrada (RegistroRequest, LoginRequest) y salida (AdministradorResponse, LoginResponse)
+- **Manejo de excepciones:** Centralizado mediante @RestControllerAdvice con GlobalExceptionHandler
+- **Persistencia:** Repositorios JPA extendiendo JpaRepository
+- **Inyección de dependencias:** PasswordEncoder existente inyectado mediante @Autowired
+- **Documentación:** JavaDoc y comentarios en español
+- **Seguridad:** Respuestas que nunca exponen contraseña, hash ni información sensible
 
-# Tests
-./mvnw test
+## 11. Versionamiento
 
-# Empaquetar JAR
-./mvnw clean package
+- **Sistema de control:** Git
+- **Repositorio remoto:** GitHub
+- **Rama de desarrollo:** feature/GA7-220501096-AA5-EV01
+- **Commit de implementación:** e64372a
+- **Mensaje del commit:** "feat: implementar servicio web de registro y validaciones de autenticación"
+- **Enlace a la rama:** [Rama feature/GA7-220501096-AA5-EV01](https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA7-220501096-AA5-EV01)
 
-# Ejecutar JAR
-java -jar target/inventario-0.0.1-SNAPSHOT.jar
-```
+## 12. Conclusión
 
-#### Frontend
-```bash
-# Dev server
-npm run dev
+Los cuatro criterios de evaluación quedaron implementados y verificados:
 
-# Build para producción
-npm run build
+1. **Registro:** Servicio web POST /api/v1/auth/registro que registra administradores con validación de datos, normalización de campos y cifrado de contraseña. Retorna HTTP 201 con datos públicos (sin contraseña).
 
-# Preview build
-npm run preview
+2. **Inicio de sesión:** Servicio web POST /api/v1/auth/login que autentica administradores validando correo y contraseña. Retorna HTTP 200 con access token y datos públicos.
 
-# Linting (TypeScript)
-npm run build  # Incluye verificación tsc
-```
+3. **Validaciones:** Implementadas mediante Bean Validation (@NotBlank, @Email, @Size) en RegistroRequest, verificación de duplicados mediante existsByCorreoIgnoreCase(), y excepciones específicas (CorreoDuplicadoException, CredencialesInvalidasException) que retornan códigos HTTP estándar (400, 401, 409).
 
-## Contribuciones
+4. **Versionamiento:** Todos los cambios fueron desarrollados en la rama feature/GA7-220501096-AA5-EV01 y consolidados en el commit e64372a, permitiendo rastreabilidad y reversibilidad.
 
-Para contribuir:
-1. Fork el repositorio
-2. Crea una rama (`git checkout -b feature/nueva-funcion`)
-3. Commit cambios (`git commit -m 'Agrega nueva función'`)
-4. Push a la rama (`git push origin feature/nueva-funcion`)
-5. Abre un Pull Request
-
-## Licencia
-
-Propietario — Gata Shoes
-
-## Contacto
-
-Para soporte o preguntas sobre el proyecto, contacta al equipo de desarrollo.
-
----
-
-**Última actualización**: Junio 2026
+La solución se construyó sobre la arquitectura existente de Gata Shoes sin eliminar ni afectar los demás módulos del proyecto, manteniendo los estándares de codificación, seguridad y manejo de excepciones ya establecidos.
