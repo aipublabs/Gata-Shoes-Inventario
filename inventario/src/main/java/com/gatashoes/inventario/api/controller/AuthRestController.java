@@ -1,7 +1,10 @@
 package com.gatashoes.inventario.api.controller;
 
 import com.gatashoes.inventario.api.dto.request.LoginRequest;
+import com.gatashoes.inventario.api.dto.request.RegistroRequest;
+import com.gatashoes.inventario.api.dto.response.AdministradorResponse;
 import com.gatashoes.inventario.api.dto.response.LoginResponse;
+import com.gatashoes.inventario.api.mapper.AdministradorMapper;
 import com.gatashoes.inventario.api.security.AuthService;
 import com.gatashoes.inventario.api.security.JwtService;
 import com.gatashoes.inventario.model.Administrador;
@@ -131,5 +134,34 @@ public class AuthRestController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();
+    }
+
+    /**
+     * Registra un nuevo administrador en el sistema.
+     *
+     * Recibe y valida los datos mediante @Valid RegistroRequest.
+     * Delega al servicio la normalización del correo, la verificación de duplicados,
+     * el cifrado de la contraseña y la persistencia en base de datos.
+     *
+     * @param request RegistroRequest con nombre, correo y contraseña
+     * @return ResponseEntity con AdministradorResponse (sin contraseña) y HTTP 201 Created
+     */
+    @PostMapping("/registro")
+    public ResponseEntity<AdministradorResponse> registro(
+            @RequestBody @Valid RegistroRequest request) {
+
+        // Crear entidad Administrador
+        Administrador admin = new Administrador();
+        admin.setNombre(request.nombre());
+        admin.setCorreo(request.correo());
+        admin.setContrasena(request.contrasena());
+
+        // Registrar: normaliza, valida duplicados, cifra, persiste
+        Administrador registrado = administradorService.registrarAdministrador(admin);
+
+        // Convertir a respuesta sin exponer contraseña
+        AdministradorResponse response = AdministradorMapper.toResponse(registrado);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

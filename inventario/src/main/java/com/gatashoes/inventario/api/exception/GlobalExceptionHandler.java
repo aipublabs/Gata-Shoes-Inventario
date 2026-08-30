@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
-                "Not Found",
+                "No Encontrado",
                 ex.getMessage(),
                 request.getRequestURI()
         );
@@ -38,11 +38,37 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Bad Request",
+                "Solicitud Inválida",
                 validationErrors,
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(CorreoDuplicadoException.class)
+    public ResponseEntity<ErrorResponse> handleCorreoDuplicado(CorreoDuplicadoException ex,
+                                                               HttpServletRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Conflicto",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ResponseEntity<ErrorResponse> handleCredencialesInvalidas(CredencialesInvalidasException ex,
+                                                                     HttpServletRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                "No Autorizado",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(Exception.class)
@@ -51,7 +77,7 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Internal Server Error",
+                "Error Interno del Servidor",
                 ex.getMessage(),
                 request.getRequestURI()
         );

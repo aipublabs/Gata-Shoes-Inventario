@@ -9,4 +9,6 @@ public interface AdministradorRepository
         extends JpaRepository<Administrador, Integer> {
 
     Optional<Administrador> findByCorreo(String correo);
+
+    boolean existsByCorreoIgnoreCase(String correo);
 }
