@@ -383,9 +383,3 @@ Durante la creación de las evidencias se aplicaron las siguientes medidas:
 - Las variables temporales de la colección se utilizaron únicamente para las pruebas.
 - El archivo con los endpoints no contiene secretos.
 - El archivo con el enlace al repositorio contiene únicamente información pública de la rama.
-
-15. Verifica que no se haya modificado ningún archivo diferente de README.md.
-16. No ejecutes comandos.
-17. No hagas commit.
-18. No hagas push.
-19. Detente después de actualizar README.md.
