@@ -1,92 +1,111 @@
-# Evidencia GA7-220501096-AA5-EV01
+# Evidencia GA7-220501096-AA5-EV02
+
+## API: pruebas de registro e inicio de sesión con Postman
 
 ## 1. Información general
 
-- **Evidencia:** GA7-220501096-AA5-EV01
-- **Nombre:** Diseño y desarrollo de servicios web, caso
+- **Evidencia:** GA7-220501096-AA5-EV02
+- **Tipo de evidencia:** Producto
+- **Nombre:** API
 - **Proyecto:** Gata Shoes, Sistema de Inventario
+- **Programa:** Análisis y Desarrollo de Software
 - **Backend:** Spring Boot 3.3.5 y Java 17
 - **Base de datos:** MySQL 8
+- **Herramienta de pruebas:** Postman
 - **Seguridad:** Spring Security, JWT y BCrypt
-- **Rama:** feature/GA7-220501096-AA5-EV01
-- **Commit principal de implementación:** e64372a
+- **Rama:** `feature/GA7-220501096-AA5-EV02`
 
 ## 2. Objetivo
 
-El objetivo es implementar y verificar servicios web reutilizables para:
+Realizar y documentar las pruebas funcionales de los servicios web de registro e inicio de sesión desarrollados en la evidencia GA7-220501096-AA5-EV01, utilizando Postman para comprobar las respuestas exitosas, las validaciones de entrada y el manejo de errores de autenticación.
 
-- Registrar administradores con validación de datos y cifrado de contraseñas
-- Iniciar sesión de administradores validando credenciales
-- Validar los datos de entrada mediante Bean Validation
-- Asegurar las contraseñas utilizando BCrypt
-- Controlar errores mediante excepciones específicas y códigos HTTP estándar
-- Utilizar Git y GitHub para versionar el código durante todo el proceso de desarrollo
+## 3. Alcance
 
-## 3. Criterios de evaluación
+Esta evidencia evalúa exclusivamente los siguientes servicios web:
 
-| Criterio | Estado | Descripción |
-|----------|--------|-------------|
-| Servicio web para registro | Cumplido | Se implementó endpoint POST /api/v1/auth/registro que permite registrar administradores con validación de datos y cifrado de contraseña. La respuesta HTTP es 201 Created y no expone la contraseña. |
-| Servicio web para inicio de sesión | Cumplido | Se implementó endpoint POST /api/v1/auth/login que autentica administradores validando correo y contraseña. La respuesta HTTP es 200 OK y retorna access token, idAdmin, nombre y correo. |
-| Validaciones de verificación | Cumplido | Se implementaron validaciones mediante Bean Validation (@NotBlank, @Email, @Size) y verificación de duplicados mediante existsByCorreoIgnoreCase(). Códigos HTTP: 400 para datos inválidos, 409 para correo duplicado, 401 para credenciales inválidas. |
-| Herramientas de versionamiento | Cumplido | Se utilizó Git como sistema de control de versiones y GitHub como repositorio remoto. Todos los cambios fueron desarrollados en la rama feature/GA7-220501096-AA5-EV01 y consolidados en el commit e64372a. |
+- `POST /api/v1/auth/registro`
+- `POST /api/v1/auth/login`
 
-## 4. Servicio web de registro
+Las pruebas de otras API del proyecto, como categorías, inventario, productos, colores, tallas y alertas, no forman parte del alcance de esta evidencia.
 
-### Especificación
+## 4. Criterios de evaluación
 
-- **Método:** POST
-- **Endpoint:** /api/v1/auth/registro
-- **Acceso:** Público mediante /api/v1/auth/**
-- **Content-Type:** application/json
+| N.º | Criterio de evaluación | Evidencia de cumplimiento | Estado |
+|---:|---|---|---|
+| 1 | Realiza el test de la API utilizando Postman | Colección con siete solicitudes ejecutadas y pruebas automáticas aprobadas | Cumplido |
+| 2 | Realiza el video solicitado mostrando las pruebas de la API | Video con la ejecución y explicación de las pruebas | Cumplido |
+| 3 | Realiza la documentación de la API | Documento de pruebas con descripción, resultados y pantallazos | Cumplido |
+| 4 | Entrega los endpoints de las API desarrolladas | Archivo independiente con la documentación de registro y login | Cumplido |
 
-### Solicitud
+## 5. Servicios web evaluados
+
+### 5.1 Registro de administrador
+
+- **Método HTTP:** `POST`
+- **Endpoint:** `/api/v1/auth/registro`
+- **URL local:** `http://localhost:8081/api/v1/auth/registro`
+- **Autenticación requerida:** No
+- **Content-Type:** `application/json`
+
+El servicio permite registrar un administrador mediante nombre, correo y contraseña.
+
+El proceso incluye:
+
+- Validación de campos obligatorios.
+- Validación del formato del correo.
+- Validación de la longitud de la contraseña.
+- Verificación de correos duplicados.
+- Normalización del nombre y del correo.
+- Cifrado de la contraseña mediante BCrypt.
+- Persistencia del administrador en MySQL.
+- Respuesta sin contraseña ni hash.
+
+#### Solicitud de ejemplo
 
 ```json
 {
-  "nombre": "Usuario Prueba",
+  "nombre": "Usuario Prueba EV02",
   "correo": "usuario.prueba@example.com",
   "contrasena": "ClaveSegura123"
 }
 ```
 
-### Respuesta exitosa (HTTP 201)
+#### Respuesta exitosa
+
+Código HTTP:
+
+```text
+201 Created
+```
 
 ```json
 {
-  "idAdmin": 2,
-  "nombre": "Usuario Prueba",
+  "idAdmin": 3,
+  "nombre": "Usuario Prueba EV02",
   "correo": "usuario.prueba@example.com"
 }
 ```
 
-### Comportamiento
+#### Posibles respuestas
 
-- **HTTP 201 Created:** Registro exitoso
-- **HTTP 400 Bad Request:** Datos de entrada inválidos (nombre vacío, correo con formato inválido, contraseña menor a 8 caracteres)
-- **HTTP 409 Conflict:** Correo duplicado
-- **Seguridad:** La respuesta no contiene contraseña, password ni hash
-- **Cifrado:** La contraseña se cifra utilizando PasswordEncoder con algoritmo BCrypt existente
-- **Normalización:** 
-  - El nombre se normaliza eliminando espacios externos con `.trim()`
-  - El correo se normaliza eliminando espacios externos y convirtiéndolo a minúsculas con `.toLowerCase(Locale.ROOT)`
-- **Validación de duplicados:** Se utiliza `existsByCorreoIgnoreCase()` para verificar que el correo no esté registrado
-- **Delegación:** El endpoint delega la lógica completa de registro en `AdministradorService`
+| Código HTTP | Descripción |
+|---:|---|
+| `201 Created` | Administrador registrado correctamente |
+| `400 Bad Request` | Los datos enviados no cumplen las validaciones |
+| `409 Conflict` | El correo ya se encuentra registrado |
+| `500 Internal Server Error` | Se produjo un error no controlado en el servidor |
 
-### Consideración técnica identificada
+### 5.2 Inicio de sesión
 
-Bean Validation se ejecuta antes de la normalización del servicio. Por esta razón, el correo de entrada debe tener un formato válido y no debe incluir espacios externos. Esta es una consideración técnica identificada durante la validación. El correo debe enviarse sin espacios al inicio o al final, debido a que Bean Validation se ejecuta antes de la normalización realizada por el servicio.
+- **Método HTTP:** `POST`
+- **Endpoint:** `/api/v1/auth/login`
+- **URL local:** `http://localhost:8081/api/v1/auth/login`
+- **Autenticación requerida:** No
+- **Content-Type:** `application/json`
 
-## 5. Servicio web de inicio de sesión
+El servicio valida el correo y la contraseña del administrador. Cuando la autenticación es correcta, genera un access token JWT y devuelve los datos públicos del usuario.
 
-### Especificación
-
-- **Método:** POST
-- **Endpoint:** /api/v1/auth/login
-- **Acceso:** Público
-- **Content-Type:** application/json
-
-### Solicitud
+#### Solicitud de ejemplo
 
 ```json
 {
@@ -95,149 +114,306 @@ Bean Validation se ejecuta antes de la normalización del servicio. Por esta raz
 }
 ```
 
-### Respuesta exitosa (HTTP 200)
+#### Respuesta exitosa
 
-- **HTTP 200 OK:** Autenticación exitosa
-- **Contenido:** access token (no se muestra en esta documentación), idAdmin, nombre y correo
-- **Seguridad:** La respuesta no contiene la contraseña
+Código HTTP:
 
-### Comportamiento de credenciales inválidas
-
-- **HTTP 401 Unauthorized:** Correo inexistente o contraseña incorrecta
-- **Mensaje:** "Credenciales inválidas"
-- **Seguridad:** El servicio no revela si falló el correo o la contraseña, brindando igual seguridad para ambos casos
-
-### Proceso de verificación
-
-- La contraseña se verifica utilizando `PasswordEncoder.matches()` con BCrypt
-- Se mantiene compatibilidad con contraseñas sin cifrar de migraciones anteriores, cifrándolas automáticamente al verificar éxito
-
-## 6. Validaciones implementadas
-
-| Escenario | Resultado verificado | Observaciones |
-|-----------|----------------------|--------------|
-| **Registro exitoso** | HTTP 201 | Devuelve idAdmin, nombre y correo sin exponer contraseña |
-| **Inicio de sesión exitoso** | HTTP 200 | Devuelve los datos del administrador y confirma la existencia del access token (no mostrado) |
-| **Correo duplicado** | HTTP 409 Conflict | Mensaje: "El correo ya se encuentra registrado" |
-| **Correo con formato inválido** | HTTP 400 Bad Request | Valor utilizado: "correo-invalido" → Mensaje: "El correo debe tener un formato válido" |
-| **Contraseña menor a 8 caracteres** | HTTP 400 Bad Request | Valor utilizado: "Abc123" → Mensaje: "La contraseña debe tener entre 8 y 255 caracteres" |
-| **Campos vacíos** | HTTP 400 Bad Request | Se recibieron mensajes para nombre, correo y contraseña obligatorios. Una contraseña vacía puede producir simultáneamente los mensajes de @NotBlank y @Size, porque incumple ambas reglas. |
-| **Credenciales incorrectas** | HTTP 401 Unauthorized | Error: "No Autorizado" → Mensaje: "Credenciales inválidas" |
-| **Cifrado de contraseña** | Verificado en MySQL | Prefijo observado: $2a$ → Longitud observada: 60 caracteres → Esto confirma el almacenamiento mediante BCrypt |
-| **Limpieza de datos de prueba** | Confirmado | El usuario temporal utilizado en la validación fue eliminado de MySQL. Se confirmó que quedaron cero registros para ese usuario. |
-
-## 7. Archivos relacionados con la evidencia
-
-El commit e64372a modificó o creó exactamente estos ocho archivos:
-
-1. **inventario/src/main/java/com/gatashoes/inventario/api/controller/AuthRestController.java**
-   - Controlador REST que expone los endpoints `/login`, `/refresh`, `/logout` y `/registro`
-   - Recibe solicitudes, delega en servicios y retorna respuestas con códigos HTTP apropiados
-
-2. **inventario/src/main/java/com/gatashoes/inventario/api/dto/request/RegistroRequest.java**
-   - DTO para recibir datos de registro
-   - Incluye validaciones mediante Bean Validation: @NotBlank, @Email, @Size
-   - Todos los mensajes de validación están en español
-
-3. **inventario/src/main/java/com/gatashoes/inventario/api/exception/CorreoDuplicadoException.java**
-   - Excepción específica para correos duplicados
-   - Permite retornar HTTP 409 Conflict de forma diferenciada
-
-4. **inventario/src/main/java/com/gatashoes/inventario/api/exception/CredencialesInvalidasException.java**
-   - Excepción específica para credenciales inválidas
-   - Permite retornar HTTP 401 Unauthorized de forma diferenciada
-
-5. **inventario/src/main/java/com/gatashoes/inventario/api/exception/GlobalExceptionHandler.java**
-   - Manejador centralizado de excepciones mediante @RestControllerAdvice
-   - Convierte excepciones en respuestas ErrorResponse con códigos HTTP estándar
-   - Maneja: ResourceNotFoundException, MethodArgumentNotValidException, CorreoDuplicadoException, CredencialesInvalidasException, Exception
-
-6. **inventario/src/main/java/com/gatashoes/inventario/api/security/AuthService.java**
-   - Servicio que realiza la autenticación
-   - Valida correo y contraseña
-   - Lanza CredencialesInvalidasException sin revelar cuál dato falló
-   - Mantiene compatibilidad con contraseñas sin cifrar, cifrándolas automáticamente
-
-7. **inventario/src/main/java/com/gatashoes/inventario/repository/AdministradorRepository.java**
-   - Repositorio JPA para Administrador
-   - Agrega método `existsByCorreoIgnoreCase()` para verificación de duplicados case-insensitive
-
-8. **inventario/src/main/java/com/gatashoes/inventario/service/AdministradorService.java**
-   - Servicio que contiene la lógica de negocio para administradores
-   - Agrega método `registrarAdministrador()` que normaliza datos, verifica duplicados, cifra contraseña y persiste
-
-## 8. Flujo del servicio de registro
-
-```
-Cliente HTTP
-    ↓
-AuthRestController (recibe solicitud, valida anotación @Valid)
-    ↓
-RegistroRequest y Bean Validation (valida formato, obligatoriedad, tamaños)
-    ↓
-AdministradorService.registrarAdministrador() (normaliza, verifica, cifra, persiste)
-    ↓
-AdministradorRepository (accede a base de datos MySQL)
-    ↓
-MySQL (almacena registro)
-    ↓
-AdministradorMapper (convierte entidad a DTO sin contraseña)
-    ↓
-AdministradorResponse (retorna al cliente)
-    ↓
-Cliente HTTP (recibe HTTP 201 con datos públicos)
+```text
+200 OK
 ```
 
-### Responsabilidades por capa
+```json
+{
+  "accessToken": "[TOKEN JWT OCULTO POR SEGURIDAD]",
+  "idAdmin": 3,
+  "nombre": "Usuario Prueba EV02",
+  "correo": "usuario.prueba@example.com"
+}
+```
 
-- **AuthRestController:** Recibe solicitudes HTTP, valida con @Valid, delega en servicios, retorna ResponseEntity con código HTTP y cuerpo
-- **Bean Validation:** Valida formato, obligatoriedad, rangos de valores antes de ser procesados por el servicio
-- **AdministradorService:** Normaliza datos (trim, toLowerCase), verifica duplicados, cifra contraseña, captura excepciones específicas
-- **AdministradorRepository:** Accede a base de datos, ejecuta consultas, persiste cambios
-- **GlobalExceptionHandler:** Convierte excepciones de negocio en respuestas HTTP con ErrorResponse estandarizado
-- **AdministradorMapper:** Convierte entidades JPA a DTOs de respuesta, excluye datos sensibles
+#### Posibles respuestas
 
-## 9. Códigos HTTP
+| Código HTTP | Descripción |
+|---:|---|
+| `200 OK` | Inicio de sesión correcto |
+| `400 Bad Request` | Los campos obligatorios están vacíos |
+| `401 Unauthorized` | El correo no existe o la contraseña es incorrecta |
+| `500 Internal Server Error` | Se produjo un error no controlado en el servidor |
 
-- **200 OK:** Inicio de sesión correcto. Contiene access token, idAdmin, nombre y correo
-- **201 Created:** Registro correcto. Contiene idAdmin, nombre y correo (sin contraseña)
-- **400 Bad Request:** Datos de entrada inválidos. Causa: formato de correo inválido, contraseña menor a 8 caracteres, campos vacíos. Mensaje en español de la validación que falló
-- **401 Unauthorized:** Credenciales inválidas. Causa: correo inexistente o contraseña incorrecta. Mensaje: "Credenciales inválidas"
-- **409 Conflict:** Correo duplicado. Causa: el correo ya está registrado. Mensaje: "El correo ya se encuentra registrado"
-- **500 Internal Server Error:** Error no controlado en el servidor
+El mensaje utilizado para las credenciales incorrectas es:
 
-## 10. Comentarios y estándares de codificación
+```text
+Credenciales inválidas
+```
 
-Se conservaron los estándares existentes del proyecto Gata Shoes:
+El servicio no revela si el error corresponde al correo o a la contraseña.
 
-- **Convención de nombres:** Clases en PascalCase, métodos y variables en camelCase, paquetes en minúsculas
-- **Arquitectura:** Organización por capas (controller → service → repository)
-- **DTOs:** Uso de records de Java para entrada (RegistroRequest, LoginRequest) y salida (AdministradorResponse, LoginResponse)
-- **Manejo de excepciones:** Centralizado mediante @RestControllerAdvice con GlobalExceptionHandler
-- **Persistencia:** Repositorios JPA extendiendo JpaRepository
-- **Inyección de dependencias:** PasswordEncoder existente inyectado mediante @Autowired
-- **Documentación:** JavaDoc y comentarios en español
-- **Seguridad:** Respuestas que nunca exponen contraseña, hash ni información sensible
+## 6. Colección de Postman
+
+Para esta evidencia se creó la colección:
+
+```text
+GA7-220501096-AA5-EV02 - Registro y Login
+```
+
+La colección contiene siete solicitudes con scripts automáticos de validación:
+
+1. `EV02-01 - Registro exitoso`
+2. `EV02-02 - Inicio de sesión exitoso`
+3. `EV02-03 - Correo duplicado`
+4. `EV02-04 - Correo inválido`
+5. `EV02-05 - Contraseña corta`
+6. `EV02-06 - Campos vacíos en registro`
+7. `EV02-07 - Credenciales incorrectas`
+
+### Variables de la colección
+
+| Variable | Descripción |
+|---|---|
+| `baseUrl` | URL base de la API |
+| `correoPruebaEV02` | Correo dinámico generado para cada ejecución |
+| `contrasenaPruebaEV02` | Contraseña temporal utilizada en las pruebas |
+| `idAdminPruebaEV02` | Identificador retornado al registrar el administrador |
+
+La solicitud `EV02-01 - Registro exitoso` genera dinámicamente un correo mediante `Date.now()`.
+
+Las solicitudes posteriores reutilizan el correo, la contraseña y el identificador almacenados en las variables de la colección.
+
+## 7. Pruebas ejecutadas
+
+| ID | Caso de prueba | Endpoint | Resultado | Estado |
+|---|---|---|---:|---|
+| EV02-01 | Registro exitoso | `POST /api/v1/auth/registro` | HTTP 201 | Aprobada |
+| EV02-02 | Inicio de sesión exitoso | `POST /api/v1/auth/login` | HTTP 200 | Aprobada |
+| EV02-03 | Registro con correo duplicado | `POST /api/v1/auth/registro` | HTTP 409 | Aprobada |
+| EV02-04 | Registro con correo inválido | `POST /api/v1/auth/registro` | HTTP 400 | Aprobada |
+| EV02-05 | Registro con contraseña menor de ocho caracteres | `POST /api/v1/auth/registro` | HTTP 400 | Aprobada |
+| EV02-06 | Registro con campos obligatorios vacíos | `POST /api/v1/auth/registro` | HTTP 400 | Aprobada |
+| EV02-07 | Inicio de sesión con credenciales incorrectas | `POST /api/v1/auth/login` | HTTP 401 | Aprobada |
+
+Todas las verificaciones automáticas configuradas en la colección de Postman finalizaron con estado `Passed`.
+
+## 8. Resultados principales
+
+### 8.1 Registro exitoso
+
+Se verificó que:
+
+- El servicio retorna HTTP `201 Created`.
+- La respuesta tiene formato JSON.
+- La respuesta contiene `idAdmin`, `nombre` y `correo`.
+- El nombre retornado corresponde al nombre enviado.
+- El correo retornado corresponde al correo dinámico generado.
+- La respuesta no contiene `contrasena`, `password` ni `hash`.
+- El identificador generado queda disponible para las siguientes pruebas.
+
+### 8.2 Inicio de sesión exitoso
+
+Se verificó que:
+
+- El servicio retorna HTTP `200 OK`.
+- La respuesta tiene formato JSON.
+- La respuesta contiene un access token.
+- Los datos corresponden al administrador previamente registrado.
+- La respuesta contiene `idAdmin`, `nombre` y `correo`.
+- La respuesta no expone la contraseña.
+- El access token se mantiene oculto en la documentación y en el video.
+
+### 8.3 Correo duplicado
+
+Se verificó que:
+
+- El servicio retorna HTTP `409 Conflict`.
+- La respuesta tiene formato JSON.
+- El error es identificado como `Conflicto`.
+- El mensaje indica que el correo ya se encuentra registrado.
+- La respuesta contiene la ruta `/api/v1/auth/registro`.
+
+Ejemplo de respuesta:
+
+```json
+{
+  "status": 409,
+  "error": "Conflicto",
+  "message": "El correo ya se encuentra registrado",
+  "path": "/api/v1/auth/registro"
+}
+```
+
+### 8.4 Correo inválido
+
+Se verificó que:
+
+- El servicio retorna HTTP `400 Bad Request`.
+- La respuesta tiene formato JSON.
+- El error es identificado como `Solicitud Inválida`.
+- La respuesta indica que el correo debe tener un formato válido.
+
+Ejemplo de respuesta:
+
+```json
+{
+  "status": 400,
+  "error": "Solicitud Inválida",
+  "message": "correo: El correo debe tener un formato válido",
+  "path": "/api/v1/auth/registro"
+}
+```
+
+### 8.5 Contraseña corta
+
+Se verificó que:
+
+- El servicio retorna HTTP `400 Bad Request`.
+- La respuesta tiene formato JSON.
+- La respuesta indica que la contraseña debe tener entre 8 y 255 caracteres.
+
+El valor utilizado para realizar la prueba fue:
+
+```text
+Abc123
+```
+
+Ejemplo de respuesta:
+
+```json
+{
+  "status": 400,
+  "error": "Solicitud Inválida",
+  "message": "contrasena: La contraseña debe tener entre 8 y 255 caracteres",
+  "path": "/api/v1/auth/registro"
+}
+```
+
+### 8.6 Campos vacíos en registro
+
+Se verificó que:
+
+- El servicio retorna HTTP `400 Bad Request`.
+- La respuesta tiene formato JSON.
+- La respuesta contiene mensajes para nombre, correo y contraseña obligatorios.
+- No se crea un administrador cuando los campos obligatorios están vacíos.
+
+Una contraseña vacía puede producir simultáneamente los mensajes correspondientes a `@NotBlank` y `@Size`, debido a que el valor incumple ambas validaciones.
+
+Ejemplo de respuesta:
+
+```json
+{
+  "status": 400,
+  "error": "Solicitud Inválida",
+  "message": "correo: El correo es obligatorio; contrasena: La contraseña es obligatoria; nombre: El nombre es obligatorio; contrasena: La contraseña debe tener entre 8 y 255 caracteres",
+  "path": "/api/v1/auth/registro"
+}
+```
+
+### 8.7 Credenciales incorrectas
+
+Se verificó que:
+
+- El servicio retorna HTTP `401 Unauthorized`.
+- La respuesta tiene formato JSON.
+- El error es identificado como `No Autorizado`.
+- El mensaje es `Credenciales inválidas`.
+- La respuesta no revela si el dato incorrecto corresponde al correo o a la contraseña.
+
+Ejemplo de respuesta:
+
+```json
+{
+  "status": 401,
+  "error": "No Autorizado",
+  "message": "Credenciales inválidas",
+  "path": "/api/v1/auth/login"
+}
+```
+
+## 9. Limpieza de datos
+
+Después de ejecutar las pruebas se eliminó de MySQL el administrador temporal creado por la colección.
+
+La eliminación se realizó utilizando el identificador y el correo del usuario temporal, con el propósito de evitar eliminar un registro diferente.
+
+Posteriormente se verificó mediante una consulta que no quedaron registros asociados al usuario temporal utilizado en las pruebas.
+
+## 10. Evidencias generadas
+
+La entrega de esta actividad incluye:
+
+- Código fuente del proyecto.
+- Documento de pruebas con los pantallazos de Postman.
+- Video con la ejecución y explicación de las pruebas.
+- Colección Postman con siete solicitudes y scripts automáticos.
+- Archivo independiente con la documentación de los endpoints.
+- Archivo con el enlace al repositorio.
+- README específico de la rama de la evidencia.
+
+Los archivos principales de soporte son:
+
+- `GA7-220501096-AA5-EV02_DOCUMENTO_PRUEBAS.docx` o su versión final en PDF.
+- `GA7-220501096-AA5-EV02_VIDEO.mp4`.
+- `GA7-220501096-AA5-EV02.postman_collection.json`.
+- `ENDPOINTS_AA5_EV02.txt`.
+- `ENLACE_REPOSITORIO_AA5_EV02.txt`.
+- `README.md`.
 
 ## 11. Versionamiento
 
-- **Sistema de control:** Git
+- **Sistema de control de versiones:** Git
 - **Repositorio remoto:** GitHub
-- **Rama de desarrollo:** feature/GA7-220501096-AA5-EV01
-- **Commit de implementación:** e64372a
-- **Mensaje del commit:** "feat: implementar servicio web de registro y validaciones de autenticación"
-- **Enlace a la rama:** [Rama feature/GA7-220501096-AA5-EV01](https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA7-220501096-AA5-EV01)
+- **Rama de la evidencia:** `feature/GA7-220501096-AA5-EV02`
 
-## 12. Conclusión
+Enlace a la rama:
 
-Los cuatro criterios de evaluación quedaron implementados y verificados:
+https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA7-220501096-AA5-EV02
 
-1. **Registro:** Servicio web POST /api/v1/auth/registro que registra administradores con validación de datos, normalización de campos y cifrado de contraseña. Retorna HTTP 201 con datos públicos (sin contraseña).
+La rama fue creada a partir de la versión terminada de la evidencia GA7-220501096-AA5-EV01, conservando los servicios web de registro e inicio de sesión que se probaron en esta actividad.
 
-2. **Inicio de sesión:** Servicio web POST /api/v1/auth/login que autentica administradores validando correo y contraseña. Retorna HTTP 200 con access token y datos públicos.
+## 12. Consideraciones de seguridad
 
-3. **Validaciones:** Implementadas mediante Bean Validation (@NotBlank, @Email, @Size) en RegistroRequest, verificación de duplicados mediante existsByCorreoIgnoreCase(), y excepciones específicas (CorreoDuplicadoException, CredencialesInvalidasException) que retornan códigos HTTP estándar (400, 401, 409).
+Durante la creación de las evidencias se aplicaron las siguientes medidas:
 
-4. **Versionamiento:** Todos los cambios fueron desarrollados en la rama feature/GA7-220501096-AA5-EV01 y consolidados en el commit e64372a, permitiendo rastreabilidad y reversibilidad.
+- No se incluyeron contraseñas reales.
+- No se publicaron hashes completos.
+- No se mostraron tokens JWT completos.
+- El access token fue ocultado en el documento y en el video.
+- Los usuarios temporales fueron eliminados después de las pruebas.
+- Las respuestas del servicio no exponen contraseñas.
+- El mensaje de credenciales inválidas no indica cuál dato falló.
+- Las variables temporales de la colección se utilizaron únicamente para las pruebas.
+- El archivo con los endpoints no contiene secretos.
+- El archivo con el enlace al repositorio contiene únicamente información pública de la rama.
 
-La solución se construyó sobre la arquitectura existente de Gata Shoes sin eliminar ni afectar los demás módulos del proyecto, manteniendo los estándares de codificación, seguridad y manejo de excepciones ya establecidos.
+## 13. Conclusiones
+
+Las pruebas realizadas en Postman permitieron comprobar que los servicios web de registro e inicio de sesión funcionan de acuerdo con los requerimientos definidos.
+
+El servicio de registro valida los datos de entrada, controla los correos duplicados, protege la contraseña mediante BCrypt y no expone información sensible en la respuesta.
+
+El servicio de inicio de sesión autentica correctamente a los administradores, genera un access token cuando las credenciales son válidas y rechaza las credenciales incorrectas mediante una respuesta HTTP `401 Unauthorized`.
+
+Las siete solicitudes de la colección finalizaron con sus pruebas automáticas en estado `Passed`.
+
+También se documentaron los endpoints, se elaboró el documento con los pantallazos de las pruebas, se realizó el video solicitado y se prepararon los demás soportes requeridos para la entrega de la evidencia GA7-220501096-AA5-EV02.
+
+VALIDACIONES FINALES QUE DEBES REALIZAR ANTES DE TERMINAR
+
+1. Verifica que README.md sea el único archivo modificado.
+2. Verifica que no exista un capítulo llamado "Ejecución de la colección".
+3. Verifica que no existan instrucciones para iniciar el backend.
+4. Verifica que no existan instrucciones para importar o ejecutar la colección.
+5. Verifica que la numeración principal sea consecutiva del capítulo 1 al capítulo 13.
+6. Verifica que no existan capítulos repetidos.
+7. Verifica que las subsecciones del capítulo 5 sean 5.1 y 5.2.
+8. Verifica que las subsecciones del capítulo 8 estén numeradas desde 8.1 hasta 8.7.
+9. Verifica que todos los bloques JSON estén correctamente abiertos y cerrados.
+10. Verifica que todas las tablas Markdown estén correctamente construidas.
+11. Verifica que el enlace de la rama esté en formato Markdown.
+12. Verifica que no se incluyan contraseñas reales.
+13. Verifica que no se incluyan tokens JWT completos.
+14. Verifica que no se incluyan hashes completos.
+15. Verifica que no se haya modificado ningún archivo diferente de README.md.
+16. No ejecutes comandos.
+17. No hagas commit.
+18. No hagas push.
+19. Detente después de actualizar README.md.
