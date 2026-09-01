@@ -1,5 +1,7 @@
 package com.gatashoes.inventario.service;
 
+import com.gatashoes.inventario.api.dto.request.TipoAjusteStock;
+import com.gatashoes.inventario.api.exception.OperacionInventarioInvalidaException;
 import com.gatashoes.inventario.api.exception.ResourceNotFoundException;
 import com.gatashoes.inventario.model.Inventario;
 import com.gatashoes.inventario.repository.InventarioRepository;
@@ -118,5 +120,70 @@ public class InventarioService {
      */
     public List<Inventario> listarTopStock() {
         return inventarioRepository.findTop3ByOrderByStockDesc();
+    }
+
+    /**
+     * Ajusta el stock de una variante del inventario según el tipo de operación
+     * solicitado.
+     *
+     * <p>Las operaciones admitidas son:</p>
+     * <ul>
+     *   <li>AGREGAR: suma unidades al stock actual.</li>
+     *   <li>RESTAR: resta unidades del stock actual.</li>
+     *   <li>FIJAR: reemplaza el stock actual por un valor concreto.</li>
+     * </ul>
+     *
+     * <p>Si el stock resultante llega a cero, se elimina el registro del inventario
+     * para reflejar que la variante ya no tiene existencias.</p>
+     *
+     * @param idInventario Identificador de la variante a ajustar.
+     * @param tipo Tipo de ajuste a aplicar: AGREGAR, RESTAR o FIJAR.
+     * @param cantidad Cantidad a sumar, restar o fijar según el tipo.
+     * @return El inventario actualizado si el stock resultante es mayor que cero;
+     *         null si la variante fue eliminada porque el stock final fue cero.
+     * @throws ResourceNotFoundException si la variante no existe.
+     * @throws OperacionInventarioInvalidaException si la cantidad es inválida o
+     *         si el stock resultante sería negativo.
+     */
+    public Inventario ajustarStock(Integer idInventario, TipoAjusteStock tipo, Integer cantidad) {
+        Inventario inventario = inventarioRepository.findById(idInventario)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventario no encontrado con id " + idInventario));
+
+        int stockActual = inventario.getStock() != null ? inventario.getStock() : 0;
+        int stockResultante;
+
+        switch (tipo) {
+            case AGREGAR -> {
+                if (cantidad == null || cantidad <= 0) {
+                    throw new OperacionInventarioInvalidaException("La cantidad debe ser mayor que cero para agregar o restar stock");
+                }
+                stockResultante = stockActual + cantidad;
+            }
+            case RESTAR -> {
+                if (cantidad == null || cantidad <= 0) {
+                    throw new OperacionInventarioInvalidaException("La cantidad debe ser mayor que cero para agregar o restar stock");
+                }
+                stockResultante = stockActual - cantidad;
+            }
+            case FIJAR -> {
+                if (cantidad == null) {
+                    throw new OperacionInventarioInvalidaException("La cantidad es obligatoria");
+                }
+                stockResultante = cantidad;
+            }
+            default -> throw new OperacionInventarioInvalidaException("El tipo de ajuste no es válido");
+        }
+
+        if (stockResultante < 0) {
+            throw new OperacionInventarioInvalidaException("El stock resultante no puede ser negativo");
+        }
+
+        if (stockResultante == 0) {
+            inventarioRepository.deleteById(idInventario);
+            return null;
+        }
+
+        inventario.setStock(stockResultante);
+        return inventarioRepository.save(inventario);
     }
 }

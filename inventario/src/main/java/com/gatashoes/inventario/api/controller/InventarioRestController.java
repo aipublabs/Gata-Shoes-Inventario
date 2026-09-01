@@ -1,5 +1,6 @@
 package com.gatashoes.inventario.api.controller;
 
+import com.gatashoes.inventario.api.dto.request.AjusteStockRequest;
 import com.gatashoes.inventario.api.dto.request.InventarioRequest;
 import com.gatashoes.inventario.api.dto.response.InventarioResponse;
 import com.gatashoes.inventario.api.mapper.InventarioMapper;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -151,6 +153,33 @@ public class InventarioRestController {
         inventarioExistente.setStock(request.stock());
 
         Inventario inventarioActualizado = inventarioService.actualizarInventario(inventarioExistente);
+        return ResponseEntity.ok(InventarioMapper.toResponse(inventarioActualizado));
+    }
+
+    /**
+     * Ajusta el stock de una variante de inventario según el tipo de operación
+     * solicitado: agregar, restar o fijar el stock total.
+     *
+     * <p>La lógica de cálculo y validación de negocio se ejecuta en el servicio,
+     * conservando el controlador como punto de entrada HTTP.</p>
+     *
+     * @param id Identificador de la variante del inventario a ajustar.
+     * @param request Datos del ajuste a aplicar sobre el stock.
+     * @return ResponseEntity con el inventario actualizado si el stock final es mayor
+     *         que cero; ResponseEntity vacío con estado 204 si el stock resultante es 0
+     *         y la variante fue eliminada del inventario.
+     */
+    @PatchMapping("/{id}/stock")
+    public ResponseEntity<InventarioResponse> ajustarStock(
+            @PathVariable Integer id,
+            @RequestBody @Valid AjusteStockRequest request
+    ) {
+        Inventario inventarioActualizado = inventarioService.ajustarStock(id, request.tipo(), request.cantidad());
+
+        if (inventarioActualizado == null) {
+            return ResponseEntity.noContent().build();
+        }
+
         return ResponseEntity.ok(InventarioMapper.toResponse(inventarioActualizado));
     }
 
