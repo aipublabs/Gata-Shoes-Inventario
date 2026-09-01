@@ -384,34 +384,6 @@ Durante la creación de las evidencias se aplicaron las siguientes medidas:
 - El archivo con los endpoints no contiene secretos.
 - El archivo con el enlace al repositorio contiene únicamente información pública de la rama.
 
-## 13. Conclusiones
-
-Las pruebas realizadas en Postman permitieron comprobar que los servicios web de registro e inicio de sesión funcionan de acuerdo con los requerimientos definidos.
-
-El servicio de registro valida los datos de entrada, controla los correos duplicados, protege la contraseña mediante BCrypt y no expone información sensible en la respuesta.
-
-El servicio de inicio de sesión autentica correctamente a los administradores, genera un access token cuando las credenciales son válidas y rechaza las credenciales incorrectas mediante una respuesta HTTP `401 Unauthorized`.
-
-Las siete solicitudes de la colección finalizaron con sus pruebas automáticas en estado `Passed`.
-
-También se documentaron los endpoints, se elaboró el documento con los pantallazos de las pruebas, se realizó el video solicitado y se prepararon los demás soportes requeridos para la entrega de la evidencia GA7-220501096-AA5-EV02.
-
-VALIDACIONES FINALES QUE DEBES REALIZAR ANTES DE TERMINAR
-
-1. Verifica que README.md sea el único archivo modificado.
-2. Verifica que no exista un capítulo llamado "Ejecución de la colección".
-3. Verifica que no existan instrucciones para iniciar el backend.
-4. Verifica que no existan instrucciones para importar o ejecutar la colección.
-5. Verifica que la numeración principal sea consecutiva del capítulo 1 al capítulo 13.
-6. Verifica que no existan capítulos repetidos.
-7. Verifica que las subsecciones del capítulo 5 sean 5.1 y 5.2.
-8. Verifica que las subsecciones del capítulo 8 estén numeradas desde 8.1 hasta 8.7.
-9. Verifica que todos los bloques JSON estén correctamente abiertos y cerrados.
-10. Verifica que todas las tablas Markdown estén correctamente construidas.
-11. Verifica que el enlace de la rama esté en formato Markdown.
-12. Verifica que no se incluyan contraseñas reales.
-13. Verifica que no se incluyan tokens JWT completos.
-14. Verifica que no se incluyan hashes completos.
 15. Verifica que no se haya modificado ningún archivo diferente de README.md.
 16. No ejecutes comandos.
 17. No hagas commit.
