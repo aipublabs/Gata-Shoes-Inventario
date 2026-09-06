@@ -86,14 +86,22 @@ class JwtServiceTest {
     void isTokenValid_conTokenAlterado_devuelveFalso() {
         // Dado
         String token = jwtService.generateAccessToken(crearAdministrador());
-        String ultimoCaracter = token.substring(token.length() - 1);
-        String reemplazo = ultimoCaracter.equals("a") ? "b" : "a";
-        String tokenAlterado = token.substring(0, token.length() - 1) + reemplazo;
+        String[] segmentos = token.split("\\.", -1);
+        String firma = segmentos[2];
+        int posicionIntermedia = firma.length() / 2;
+        char caracterOriginal = firma.charAt(posicionIntermedia);
+        char caracterAlterado = caracterOriginal == 'A' ? 'B' : 'A';
+        segmentos[2] = firma.substring(0, posicionIntermedia)
+                + caracterAlterado
+                + firma.substring(posicionIntermedia + 1);
+        String tokenAlterado = String.join(".", segmentos);
 
         // Cuando
         boolean resultado = jwtService.isTokenValid(tokenAlterado);
 
         // Entonces
+        assertThat(tokenAlterado).isNotEqualTo(token);
+        assertThat(tokenAlterado.split("\\.", -1)).hasSize(3);
         assertThat(resultado).isFalse();
     }
 
