@@ -1,291 +1,438 @@
-# Evidencia GA8-220501096-AA1-EV01
+# Gata Shoes - Sistema de Inventario
 
-## Desarrollo de software a partir de la integración de sus módulos componentes
+## Evidencia GA8-220501096-AA1-EV01
 
-## 1. Información general
+**Desarrollar software a partir de la integración de sus módulos componentes**
 
-- Proyecto: Gata Shoes, Sistema de Inventario.
-- Programa: Análisis y Desarrollo de Software.
-- Fase: Ejecución.
-- Evidencia: GA8-220501096-AA1-EV01.
-- Tipo de evidencia: Desempeño.
-- Rama: `feature/GA8-220501096-AA1-EV01`.
-- Repositorio: https://github.com/aipublabs/Gata-Shoes-Inventario
+- **Programa:** Análisis y Desarrollo de Software
+- **Fase:** Ejecución
+- **Rama:** `feature/GA8-220501096-AA1-EV01`
+- **Repositorio:** https://github.com/aipublabs/Gata-Shoes-Inventario
+
+## 1. Descripción
+
+Gata Shoes es una aplicación web para administrar productos, categorías, variantes, existencias, alertas y acceso administrativo. La solución integra una interfaz desarrollada con React y TypeScript, servicios implementados con Spring Boot y Java 17, persistencia mediante Spring Data JPA y una base de datos MySQL.
+
+La evidencia comprende la integración de los módulos, la aplicación de buenas prácticas de codificación, el uso del entorno de desarrollo, el control de versiones y la ejecución de pruebas unitarias.
 
 ## 2. Objetivo
 
-La evidencia busca integrar los módulos de la solución web, validar su funcionamiento conjunto, aplicar buenas prácticas, utilizar control de versiones y comprobar las reglas principales mediante pruebas unitarias.
+Integrar y comprobar los módulos de Gata Shoes de acuerdo con los requerimientos del sistema, aplicando buenas prácticas de codificación, utilizando adecuadamente el entorno de desarrollo, registrando los cambios mediante Git y verificando las reglas principales mediante pruebas unitarias.
 
 ## 3. Arquitectura de la solución
 
-- Frontend desarrollado con React y TypeScript.
-- Comunicación entre la interfaz y los servicios mediante Axios.
-- Backend desarrollado con Spring Boot y Java 17.
-- Persistencia mediante Spring Data JPA.
-- Base de datos MySQL.
-- Seguridad mediante Spring Security, JWT y BCrypt.
-
-Flujo de la solución:
-
 ```text
 Interfaz React
-→ comunicación con servicios
-→ API REST Spring Boot
-→ servicios de negocio
-→ repositorios
-→ MySQL
+    -> Comunicación con servicios
+    -> API REST Spring Boot
+    -> Servicios de negocio
+    -> Repositorios Spring Data
+    -> MySQL
 ```
+
+### Capas
+
+| Capa | Componentes | Responsabilidad |
+|---|---|---|
+| Presentación | React, páginas y componentes | Interacción con el administrador |
+| Comunicación | Cliente de servicios | Envío y recepción de información |
+| Exposición | Controladores REST | Recepción de operaciones del frontend |
+| Negocio | Servicios Spring Boot | Aplicación de reglas funcionales |
+| Persistencia | Repositorios Spring Data | Acceso a la información almacenada |
+| Datos | MySQL | Almacenamiento del sistema |
+| Seguridad | Spring Security, credenciales digitales y protección de contraseñas | Control de acceso y protección de información |
 
 ## 4. Módulos integrados
 
-| Módulo | Funciones principales | Frontend | Backend | Estado |
-|---|---|---|---|---|
-| Autenticación | Inicio de sesión y control de sesión | Pantalla de login y contexto de autenticación | AuthService, JWT y endpoints de autenticación | Integrado |
-| Administradores | Registro, consulta y eliminación | No hay pantalla dedicada identificada | AdministradorService y AdministradorRepository | Disponible mediante servicios backend |
-| Resumen | Indicadores, novedades y mayor stock | Pantalla de resumen | ResumenService e InventarioRepository | Integrado |
-| Categorías | Listar, crear, actualizar y eliminar | Pantalla de categorías | CategoriaService y CategoriaRepository | Integrado |
-| Colores | CRUD de colores | Funciones Axios para consultas y CRUD; no hay pantalla dedicada | ColorService y ColorRepository | Disponible mediante servicios backend |
-| Tallas | CRUD de tallas | Funciones Axios para consultas y CRUD; no hay pantalla dedicada | TallaService y TallaRepository | Disponible mediante servicios backend |
-| Productos | Crear producto y operaciones CRUD | Creación desde el resumen; no hay pantalla CRUD dedicada | ProductoService y ProductoRepository | Parcialmente integrado |
-| Inventario | Consultar y registrar variantes | Pantalla de inventario y modal de creación | InventarioService e InventarioRepository | Integrado |
-| Ajuste manual de stock | Agregar, restar y fijar existencias | Formulario de inventario | Endpoint especializado y regla de negocio en InventarioService | Integrado |
-| Alertas | Consultar stock bajo | Pantalla de alertas | ResumenRestController e InventarioService | Integrado |
+| Módulo | Funciones principales | Estado |
+|---|---|---|
+| Autenticación y sesión | Ingreso, protección de rutas y cierre de sesión | Interfaz y backend integrados |
+| Tablero | Distribución por categoría, nuevos ingresos y Top 3 | Interfaz y backend integrados |
+| Productos | Registro y mantenimiento de referencias | Formulario y servicios disponibles |
+| Categorías | Listado, creación, actualización y eliminación | Interfaz y backend integrados |
+| Colores y tallas | Catálogos asociados con las variantes | Servicios consumidos por los formularios |
+| Inventario | Consulta y control de existencias | Interfaz y backend integrados |
+| Ajuste de stock | Agregar, restar, fijar y eliminar al llegar a cero | Integración completada |
+| Alertas | Consulta de referencias con existencias bajas | Interfaz y backend integrados |
+| Administradores | Registro, consulta y eliminación | Servicios del backend |
 
-## 5. Integración del ajuste manual de stock
+## 5. Historias de usuario
 
-Durante EV01 se integró la pantalla React de inventario con:
+| Código | Historia de usuario | Módulo relacionado |
+|---|---|---|
+| HU-01 | Autenticación de usuario | Autenticación |
+| HU-02 | Tablero de control | Resumen |
+| HU-03 | Registro de nuevas variantes | Productos e inventario |
+| HU-04 | Consulta de ingresos recientes | Resumen |
+| HU-05 | Ajuste manual de stock | Inventario |
+| HU-06 | Administración de categorías | Categorías |
+| HU-07 | Administración de colores | Colores |
+| HU-08 | Administración de tallas | Tallas |
+| HU-09 | Administración de productos | Productos |
+| HU-10 | Consulta de alertas de stock | Alertas |
+| HU-11 | Administración de usuarios administradores | Administradores |
+| HU-12 | Cierre y continuidad de sesión | Sesión |
+
+## 6. Casos de uso principales
+
+| Código | Caso de uso | Resultado principal |
+|---|---|---|
+| CU-01 | Autenticar administrador | Permite o rechaza el acceso de forma controlada |
+| CU-02 | Consultar tablero e ingresos recientes | Presenta indicadores, novedades y Top 3 |
+| CU-03 | Gestionar categorías | Consulta y mantiene el catálogo |
+| CU-04 | Registrar producto y variante | Incorpora una referencia con talla, color y stock |
+| CU-05 | Consultar inventario | Presenta variantes y existencias |
+| CU-06 | Ajustar stock | Agrega, resta, fija o elimina al llegar a cero |
+| CU-07 | Consultar alertas | Identifica referencias con existencias bajas |
+| CU-08 | Cerrar sesión | Finaliza el acceso a funciones protegidas |
+| CU-09 | Renovar sesión | Mantiene el acceso autorizado o solicita un nuevo ingreso |
+
+## 7. Criterios funcionales principales
+
+### Autenticación y sesión
+
+- Los campos obligatorios deben validarse.
+- Las credenciales correctas permiten el acceso.
+- Las credenciales incorrectas se rechazan mediante un mensaje general.
+- Las funciones administrativas requieren una sesión válida.
+- El cierre de sesión restringe nuevamente el acceso.
+
+### Productos y variantes
+
+- El producto requiere nombre, precio y categoría.
+- La variante requiere talla, color y stock.
+- El precio debe ser mayor que cero.
+- El stock inicial no puede ser negativo.
+- La categoría, la talla y el color deben estar disponibles.
+
+### Ajuste de stock
+
+- Añadir incrementa las existencias.
+- Restar disminuye las existencias.
+- Fijar reemplaza la cantidad actual.
+- El stock no puede quedar negativo.
+- Una variante se elimina cuando el stock llega a cero.
+
+### Categorías
+
+- Se pueden consultar, crear, actualizar y eliminar.
+- El nombre es obligatorio.
+- Una categoría inexistente genera una respuesta controlada.
+
+### Alertas
+
+- Las variantes con tres unidades o menos aparecen como alertas.
+- Las variantes fuera del umbral no se incluyen.
+- La consulta no modifica el inventario.
+
+### Tablero
+
+- Presenta información consolidada del inventario.
+- Muestra nuevos ingresos.
+- Presenta el Top 3 con Mayor Stock.
+- Mantiene resultados válidos cuando no existen registros.
+
+## 8. Integración del ajuste manual de stock
+
+La pantalla de inventario consume el servicio especializado:
 
 ```text
 PATCH /api/v1/inventario/{id}/stock
 ```
 
-La integración soporta:
+La interfaz envía únicamente el tipo de ajuste y la cantidad. El backend calcula el resultado y aplica las reglas de negocio.
 
-- `AGREGAR`.
-- `RESTAR`.
-- `FIJAR`.
-- El frontend envía el tipo de ajuste y la cantidad.
-- El backend calcula el resultado.
-- El backend impide stock negativo.
+Operaciones disponibles:
+
+- `AGREGAR`
+- `RESTAR`
+- `FIJAR`
+
+Reglas aplicadas:
+
 - `AGREGAR` y `RESTAR` requieren una cantidad mayor que cero.
 - `FIJAR` permite una cantidad igual a cero.
-- Una variante se elimina cuando el stock llega a cero.
-- Se agregó `PATCH` a los métodos permitidos por CORS.
-- Se eliminó de la pantalla el campo `motivo` porque no era almacenado por el sistema.
-- Se eliminó el cálculo local utilizado como fuente principal del stock.
+- El resultado no puede ser negativo.
+- Una variante se elimina cuando el resultado llega a cero.
+- La configuración de comunicación permite solicitudes `PATCH`.
+- El campo visual de motivo fue retirado porque el sistema no lo almacenaba.
+- El cálculo definitivo del stock permanece centralizado en el backend.
 
-## 6. Validaciones funcionales realizadas
+## 9. Validaciones funcionales
 
-1. `FIJAR` actualizó el inventario 3 de stock 5 a stock 9.
-2. MySQL confirmó el stock 9.
-3. `FIJAR` restauró el inventario 3 de stock 9 a stock 5.
-4. MySQL confirmó la restauración a stock 5.
-5. `AGREGAR` cambió el stock de 5 a 7.
-6. `RESTAR` cambió el stock de 7 a 5.
-7. MySQL confirmó nuevamente el stock 5.
-8. `AGREGAR` con cantidad cero fue rechazado.
-9. `RESTAR` una cantidad superior al stock fue rechazado.
-10. Después de ambos rechazos, el stock se conservó en 5.
-11. Se creó una variante temporal con identificador 32 y stock 1.
-12. `FIJAR` la variante temporal en cero eliminó el registro.
-13. La consulta posterior confirmó que la variante temporal ya no existía.
+| Módulo | Validación | Resultado |
+|---|---|---|
+| Autenticación | Ingresar sin contraseña | Solicita el dato obligatorio |
+| Autenticación | Ingresar con credenciales válidas o inválidas | Permite el acceso o rechaza mediante un mensaje general |
+| Sesión | Acceder y cerrar sesión | Habilita o restringe las funciones protegidas |
+| Tablero | Consultar el panel | Presenta distribución, nuevos ingresos y Top 3 |
+| Productos | Registrar una referencia válida | La referencia queda disponible en catálogo e inventario |
+| Productos | Usar datos incompletos o stock negativo | Solicita corregir la información |
+| Categorías | Consultar, crear, editar y eliminar | El listado refleja las operaciones realizadas |
+| Inventario | Fijar de 5 a 9 y restaurar a 5 | Actualizaciones reflejadas en interfaz y MySQL |
+| Inventario | Agregar 2 y restar 2 | El stock cambia de 5 a 7 y regresa a 5 |
+| Inventario | Usar cero o producir un resultado negativo | La operación es rechazada |
+| Inventario | Fijar en cero una variante con una unidad | La variante se elimina |
+| Alertas | Consultar inventario crítico | Presenta referencias bajo el umbral y su clasificación |
 
-El inventario real 3 quedó restaurado en stock 5. La variante temporal 32 fue eliminada y no quedaron datos temporales de esa validación.
-
-## 7. Pruebas unitarias
-
-Las pruebas unitarias verifican servicios y reglas específicas sin iniciar toda la aplicación ni conectarse a MySQL.
-
-| Clase | Pruebas |
-|---|---:|
-| `InventarioServiceTest` | 24 |
-| `AdministradorServiceTest` | 14 |
-| `AuthServiceTest` | 8 |
-| `CategoriaServiceTest` | 10 |
-| `ColorServiceTest` | 10 |
-| `ProductoServiceTest` | 10 |
-| `ResumenServiceTest` | 7 |
-| `JwtServiceTest` | 7 |
-| `TallaServiceTest` | 10 |
-
-Resultado consolidado:
-
-- Pruebas ejecutadas: 100.
-- Pruebas aprobadas: 100.
-- Pruebas fallidas: 0.
-- Errores: 0.
-- Pruebas omitidas: 0.
-- Resultado: `BUILD SUCCESS`.
-
-Se utilizaron JUnit 5, Mockito y AssertJ. Los repositorios fueron simulados. No se utilizó MySQL, no se modificaron datos reales, no se realizaron solicitudes HTTP y no se inició Spring Boot para las pruebas unitarias. `InventarioApplicationTests` no se incluyó en la ejecución focalizada de las 100 pruebas.
-
-## 8. Cobertura funcional de las pruebas
-
-| Servicio | Funciones verificadas |
-|---|---|
-| `InventarioService` | Consultas, guardado y actualización, eliminación, alertas, novedades, mayor stock, `AGREGAR`, `RESTAR`, `FIJAR`, cantidades inválidas, stock negativo y eliminación al llegar a cero. |
-| `AdministradorService` | Consultas, registro, normalización, protección de contraseña, correo duplicado y eliminación. |
-| `AuthService` | Credenciales válidas e inválidas, contraseñas protegidas, migración de contraseñas sin protección y mensaje general de acceso inválido. |
-| `CategoriaService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
-| `ColorService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
-| `TallaService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
-| `ProductoService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
-| `ResumenService` | Total de variantes, stock total, alertas, distribución por categoría, novedades, mayor stock e inventario vacío. |
-| `JwtService` | Generación de tokens, extracción de correo, validación y rechazo de tokens malformados o alterados. |
-
-## 9. Buenas prácticas aplicadas
-
-- Separación por capas.
-- Uso de DTO.
-- Uso de servicios.
-- Uso de repositorios.
-- Validaciones centralizadas en el backend.
-- Tipos definidos en TypeScript.
-- Eliminación del uso de tipos genéricos que reducían la seguridad del código.
-- Eliminación de variables sin utilizar.
-- Revisión automática de calidad del código frontend finalizada sin errores.
-- Manejo funcional de errores.
-- Pruebas independientes.
-- Repositorios simulados.
-- Ausencia de datos reales en las pruebas.
-- Commits separados por propósito.
-
-## 10. Compilación y empaquetado
+## 10. Organización del proyecto
 
 ### Frontend
 
-- TypeScript compiló correctamente.
-- Vite generó la distribución de producción.
-- Resultado exitoso.
+```text
+frontend/src/
+├── api
+├── components
+├── contexts
+├── hooks
+├── pages
+└── types
+```
 
 ### Backend
 
-- Java 17.
-- Maven compiló correctamente.
-- Las 100 pruebas fueron ejecutadas durante el empaquetado.
-- Resultado: `BUILD SUCCESS`.
-- Archivo generado: `inventario-0.0.1-SNAPSHOT.jar`.
-- Tamaño verificado: `54494035` bytes.
+```text
+inventario/src/main/java/com/gatashoes/inventario/
+├── api
+│   ├── controller
+│   ├── dto
+│   ├── mapper
+│   ├── exception
+│   └── security
+├── config
+├── model
+├── repository
+└── service
+```
 
-La advertencia de API obsoleta en `JwtService` no impidió la compilación.
+## 11. Tecnologías y frameworks
 
-## 11. Ambiente de desarrollo y pruebas
+| Capa | Tecnología | Propósito |
+|---|---|---|
+| Interfaz | React | Construcción de pantallas y componentes |
+| Interfaz | TypeScript | Definición de tipos |
+| Navegación | React Router | Control de rutas |
+| Comunicación | Axios | Comunicación con los servicios |
+| Construcción frontend | Vite | Ejecución y distribución |
+| Backend | Spring Boot y Java 17 | Servicios web y reglas funcionales |
+| Seguridad | Spring Security | Protección de recursos |
+| Persistencia | Spring Data JPA | Acceso a datos |
+| Validación | Bean Validation | Validación de entradas |
+| Base de datos | MySQL Connector | Conexión con MySQL |
+| Pruebas | JUnit 5 | Ejecución de pruebas unitarias |
+| Pruebas | Mockito | Simulación de dependencias |
+| Pruebas | AssertJ | Verificación de resultados |
+
+## 12. Buenas prácticas aplicadas
+
+- Arquitectura por capas.
+- Separación de responsabilidades.
+- Patrón repositorio.
+- Objetos de transferencia para datos de entrada y salida.
+- Mapeo controlado entre entidades y respuestas.
+- Inyección de dependencias.
+- Manejo centralizado de excepciones.
+- Protección de solicitudes administrativas.
+- Tipado del frontend.
+- Componentes visuales reutilizables.
+- Pruebas unitarias aisladas.
+- Commits separados por propósito.
+- Revisión automática de calidad del frontend finalizada sin errores.
+
+## 13. Componentes reutilizables
 
 | Componente | Uso |
 |---|---|
-| Windows | Sistema operativo de desarrollo |
-| Visual Studio Code | IDE de desarrollo |
-| Java 17 | Lenguaje del backend |
-| Spring Boot 3.3.5 | Framework del backend |
-| Maven Wrapper | Construcción, pruebas y empaquetado |
-| React | Interfaz frontend |
-| TypeScript | Tipado del frontend |
-| Vite | Desarrollo y construcción frontend |
-| Node.js y npm | Dependencias y scripts frontend |
-| MySQL | Persistencia de datos |
-| Git | Control de versiones |
-| GitHub | Repositorio remoto |
-| Navegador web | Ejecución y validación funcional del frontend |
+| `MainLayout` | Estructura común de las páginas administrativas |
+| `Sidebar` | Menú principal y acceso a módulos |
+| `TopBar` | Barra superior, búsqueda e identificación del usuario |
+| `Modal` | Presentación de formularios y operaciones emergentes |
+| `MetricCard` | Presentación de indicadores del tablero |
+| `PageHeader` | Encabezados uniformes |
+| Componentes de formulario | Campos, botones y controles compartidos |
 
-Puertos comprobados:
+## 14. Metodología aplicada
 
-- Frontend: `5173`.
-- Backend: `8081`.
+El desarrollo se realizó de manera iterativa e incremental:
 
-## 12. Ejecución del proyecto
+1. Revisión de requerimientos.
+2. Diagnóstico de integración.
+3. Implementación del cambio mínimo.
+4. Validación funcional.
+5. Creación y ejecución de pruebas unitarias.
+6. Compilación y empaquetado.
+7. Registro y publicación mediante Git.
+8. Actualización de la documentación.
 
-Configurar MySQL con la base de datos del proyecto y definir la contraseña mediante una variable de entorno segura. No almacenar credenciales directamente en la documentación ni en el repositorio.
+## 15. Ambientes
 
-Iniciar el backend desde la carpeta del proyecto Java:
+### Desarrollo
+
+- Windows.
+- Visual Studio Code.
+- Java 17.
+- Maven Wrapper.
+- Node.js y npm.
+- React y TypeScript.
+- Spring Boot.
+- MySQL.
+- Git y GitHub.
+
+### Pruebas unitarias
+
+- JUnit 5.
+- Mockito.
+- AssertJ.
+- Repositorios simulados.
+- Sin conexión a MySQL.
+- Sin inicio completo de Spring Boot.
+- Sin solicitudes HTTP.
+
+### Pruebas funcionales
+
+- Frontend React.
+- Backend Spring Boot.
+- Navegador web.
+- MySQL.
+- Datos controlados.
+
+## 16. Configuración y ejecución
+
+### Requisitos generales
+
+- Java 17.
+- Node.js y npm.
+- MySQL.
+- Git.
+
+Los datos sensibles deben suministrarse mediante variables de entorno. No deben almacenarse contraseñas, claves o credenciales digitales en el repositorio.
+
+### Iniciar el backend
 
 ```powershell
 .\inventario\mvnw.cmd -f .\inventario\pom.xml spring-boot:run
 ```
 
-Instalar las dependencias del frontend e iniciar Vite:
+### Instalar dependencias del frontend
 
 ```powershell
-Set-Location .\frontend
-npm install
-npm run dev
+npm --prefix frontend install
 ```
 
-Acceder desde el navegador a:
+### Iniciar el frontend
+
+```powershell
+npm --prefix frontend run dev
+```
+
+## 17. Pruebas unitarias
+
+| Clase | Cantidad | Cobertura principal |
+|---|---:|---|
+| `InventarioServiceTest` | 24 | Consultas, persistencia, alertas, novedades, Top 3 y ajuste de stock |
+| `AdministradorServiceTest` | 14 | Consultas, registro, normalización, protección de contraseña, duplicados y eliminación |
+| `AuthServiceTest` | 8 | Credenciales válidas e inválidas y tratamiento de contraseñas |
+| `CategoriaServiceTest` | 10 | Listado, consulta, creación, actualización, eliminación e inexistentes |
+| `ColorServiceTest` | 10 | Listado, consulta, creación, actualización, eliminación e inexistentes |
+| `ProductoServiceTest` | 10 | Listado, consulta, creación, actualización, eliminación e inexistentes |
+| `ResumenServiceTest` | 7 | Totales, alertas, categorías, novedades, Top 3 e inventario vacío |
+| `JwtServiceTest` | 7 | Generación, lectura, validación y rechazo de credenciales alteradas |
+| `TallaServiceTest` | 10 | Listado, consulta, creación, actualización, eliminación e inexistentes |
+| **Total** | **100** | Cobertura consolidada de la solución |
+
+Resultado consolidado:
 
 ```text
-http://localhost:5173
+Tests run: 100
+Failures: 0
+Errors: 0
+Skipped: 0
+BUILD SUCCESS
 ```
 
-## 13. Ejecución de las pruebas
-
-Ejecutar las nueve clases unitarias:
+### Ejecutar las 100 pruebas unitarias
 
 ```powershell
 .\inventario\mvnw.cmd -f .\inventario\pom.xml "-Dtest=InventarioServiceTest,AdministradorServiceTest,AuthServiceTest,CategoriaServiceTest,ProductoServiceTest,ResumenServiceTest,JwtServiceTest,ColorServiceTest,TallaServiceTest" test
 ```
 
-Ejecutar la revisión automática de calidad del frontend:
+## 18. Validaciones de calidad y compilación
+
+### Revisión automática del frontend
 
 ```powershell
 npm --prefix frontend run lint
 ```
 
-Compilar el frontend:
+La revisión finalizó sin errores.
+
+### Compilar el frontend
 
 ```powershell
-npm run build
+npm --prefix frontend run build
 ```
 
-Empaquetar el backend:
+TypeScript compiló correctamente y Vite generó la distribución de producción.
+
+### Compilar el backend
 
 ```powershell
-.\inventario\mvnw.cmd -f .\inventario\pom.xml package
+.\inventario\mvnw.cmd -f .\inventario\pom.xml clean compile
 ```
 
-## 14. Control de versiones
+### Empaquetar el backend
 
-- Rama: `feature/GA8-220501096-AA1-EV01`.
-- Repositorio remoto: GitHub.
+```powershell
+.\inventario\mvnw.cmd -f .\inventario\pom.xml "-Dtest=InventarioServiceTest,AdministradorServiceTest,AuthServiceTest,CategoriaServiceTest,ProductoServiceTest,ResumenServiceTest,JwtServiceTest,ColorServiceTest,TallaServiceTest" package
+```
 
-Commits de la evidencia:
+Resultado:
 
-- `cf82654`: integrar ajuste de stock entre frontend y backend.
-- `ea496b7`: corregir errores de calidad del código frontend.
-- `444fe96`: agregar pruebas unitarias del servicio de inventario.
-- `c4d9e58`: agregar pruebas unitarias del servicio de administradores.
-- `adc6592`: completar pruebas unitarias de los servicios principales.
-- `97b1697`: estabilizar validación de token JWT alterado.
+- Archivo: `inventario-0.0.1-SNAPSHOT.jar`
+- Tamaño verificado: `54.494.035 bytes`
+- Estado: `BUILD SUCCESS`
 
-Enlace de la rama:
+## 19. Control de versiones
 
-[feature/GA8-220501096-AA1-EV01](https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA8-220501096-AA1-EV01)
+- **Rama:** `feature/GA8-220501096-AA1-EV01`
+- **Repositorio remoto:** GitHub
+- **Enlace:** https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA8-220501096-AA1-EV01
 
-## 15. Cumplimiento de los criterios de evaluación
+### Commits principales
 
-| Criterio | Evidencia de cumplimiento | Estado |
+| Commit | Propósito |
+|---|---|
+| `cf82654` | Integrar ajuste de stock entre frontend y backend |
+| `ea496b7` | Corregir errores de calidad del frontend |
+| `444fe96` | Agregar pruebas del servicio de inventario |
+| `c4d9e58` | Agregar pruebas del servicio de administradores |
+| `adc6592` | Completar pruebas de servicios principales |
+| `97b1697` | Estabilizar validación de credencial alterada |
+| `ec35a81` | Documentar integración y pruebas de EV01 |
+
+## 20. Cumplimiento de la lista de chequeo
+
+| Criterio | Evidencia | Estado |
 |---|---|---|
-| 1. Codifica los módulos de acuerdo con los requerimientos del sistema en el lenguaje seleccionado. | Módulos React, API REST Spring Boot, servicios, repositorios e integración del ajuste de stock. | Cumplido |
-| 2. Aplica buenas prácticas de codificación. | Separación por capas, DTO, validaciones backend, tipos TypeScript y pruebas aisladas. | Cumplido |
-| 3. Maneja de manera adecuada el IDE de desarrollo. | Desarrollo y organización del proyecto en Visual Studio Code. | Cumplido |
-| 4. Aplica el control de versiones del código escrito. | Rama de evidencia y commits separados por propósito en Git y GitHub. | Cumplido |
-| 5. Aplica pruebas unitarias. | 100 pruebas unitarias ejecutadas con 100 aprobadas, 0 fallidas y 0 errores. | Cumplido |
+| Codificación de módulos, 40 % | Módulos integrados, arquitectura, requerimientos, trazabilidad, validaciones y compilación | Cumplido |
+| Buenas prácticas, 15 % | Capas, paquetes, patrones, tipos, reutilización, excepciones y metodología | Cumplido |
+| Manejo del entorno de desarrollo, 15 % | Estructura, terminales, ejecución, compilación y pruebas desde Visual Studio Code | Cumplido |
+| Control de versiones, 15 % | Rama específica, commits separados, sincronización y repositorio remoto | Cumplido |
+| Pruebas unitarias, 15 % | Nueve clases y 100 pruebas aprobadas, sin fallos ni errores | Cumplido |
 
-## 16. Consideraciones de seguridad
+## 21. Seguridad
 
 - No publicar contraseñas reales.
-- No publicar tokens completos.
-- No publicar claves JWT.
+- No publicar claves o credenciales digitales completas.
 - No publicar hashes.
 - Utilizar variables de entorno.
-- Proteger las contraseñas.
-- Limitar el acceso a las funciones administrativas.
-- No usar datos reales en las pruebas unitarias.
-- No incluir secretos en la documentación.
+- Proteger las contraseñas almacenadas.
+- Restringir las funciones administrativas a sesiones válidas.
+- No utilizar datos reales en las pruebas unitarias.
+- Mantener las configuraciones locales sensibles fuera del repositorio.
 
-## 17. Conclusiones
+## 22. Conclusiones
 
-Los módulos principales trabajan de forma integrada. React se comunica con Spring Boot y Spring Boot administra la información en MySQL. El ajuste de stock quedó centralizado en el backend, con validaciones para las operaciones `AGREGAR`, `RESTAR` y `FIJAR`.
+Gata Shoes integra React, Spring Boot y MySQL para atender autenticación, sesión, tablero, productos, catálogos, inventario y alertas. La estructura por capas, los paquetes, los patrones y los componentes reutilizables respaldan las buenas prácticas de codificación.
 
-Las validaciones funcionales fueron aprobadas. Las 100 pruebas unitarias fueron aprobadas. El frontend y el backend compilaron correctamente, y el backend fue empaquetado correctamente en `inventario-0.0.1-SNAPSHOT.jar`.
-
-El trabajo fue versionado mediante Git y GitHub. Con la evidencia disponible, los criterios de EV01 quedaron cubiertos.
+Las validaciones funcionales comprobaron los flujos principales, las 100 pruebas unitarias finalizaron correctamente, el frontend y el backend compilaron, el backend fue empaquetado y los cambios quedaron versionados y publicados en GitHub.
