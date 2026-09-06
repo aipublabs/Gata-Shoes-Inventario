@@ -1,0 +1,12 @@
+.git
+.github
+.idea
+.vscode
+**/node_modules
+**/dist
+**/target
+**/.env
+**/.env.*
+*.log
+JAVADOC_AGREGADO.md
+JAVADOC_COMMENTS_SUMMARY.md
