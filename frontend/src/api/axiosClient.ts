@@ -5,6 +5,7 @@ import type {
   Talla,
   Producto,
   Inventario,
+  AjusteStockRequest,
   InventarioResumen,
   LoginResponse,
 } from "../types";
@@ -179,6 +180,9 @@ export const updateInventario = (id: number, data: {
 }) => axiosClient.put<Inventario>(`/inventario/${id}`, data);
 export const deleteInventario = (id: number) =>
   axiosClient.delete(`/inventario/${id}`);
+
+export const ajustarStock = (id: number, data: AjusteStockRequest) =>
+  axiosClient.patch<Inventario | undefined>(`/inventario/${id}/stock`, data);
 
 // Resumen
 /*

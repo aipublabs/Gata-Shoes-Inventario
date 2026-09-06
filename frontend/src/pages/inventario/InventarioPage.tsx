@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import MainLayout from "../../components/layout/MainLayout";
-import { getInventario, updateInventario, deleteInventario } from "../../api/axiosClient";
-import type { Inventario } from "../../types";
+import { ajustarStock, getInventario } from "../../api/axiosClient";
+import type { AjusteStockRequest, Inventario, TipoAjusteStock } from "../../types";
 
 type AdjustType = "add" | "sub" | "fix";
+
+const adjustmentTypeMap: Record<AdjustType, TipoAjusteStock> = {
+  add: "AGREGAR",
+  sub: "RESTAR",
+  fix: "FIJAR",
+};
 
 const InventarioPage = () => {
   // Componente dedicado a ajustar el stock de variantes existentes.
@@ -14,29 +21,28 @@ const InventarioPage = () => {
   const [selected, setSelected] = useState<Inventario | null>(null);
   const [adjustType, setAdjustType] = useState<AdjustType>("add");
   const [cantidad, setCantidad] = useState<number | "">("");
-  const [motivo, setMotivo] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const fetchInventario = async () => {
-    setIsLoading(true);
-    try {
-      const resp = await getInventario();
-      const data = resp.data ?? [];
-      setInventario(data);
-      if (data.length > 0 && !selected) {
-        setSelected(data[0]);
-      }
-    } catch (err) {
-      console.error("Error cargando inventario:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchInventario();
+    const loadInventario = async () => {
+      setIsLoading(true);
+      try {
+        const resp = await getInventario();
+        const data = resp.data ?? [];
+        setInventario(data);
+        if (data.length > 0) {
+          setSelected((currentSelected) => currentSelected ?? data[0]);
+        }
+      } catch (err) {
+        console.error("Error cargando inventario:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInventario();
   }, []);
 
   const filteredInventario = inventario.filter((item) => {
@@ -49,20 +55,6 @@ const InventarioPage = () => {
     );
   });
 
-  /*
-    Calcula el stock resultante según el tipo de ajuste seleccionado.
-    - add: suma unidades al stock actual.
-    - sub: resta unidades sin permitir valores negativos.
-    - fix: fija el stock exactamente al valor ingresado.
-  */
-  const calcPreview = (): number => {
-    if (!selected) return 0;
-    const qty = Number(cantidad) || 0;
-    if (adjustType === "add") return selected.stock + qty;
-    if (adjustType === "sub") return Math.max(0, selected.stock - qty);
-    return qty;
-  };
-
   const stockBadgeClass = (stock: number) => {
     if (stock <= 3) return "bg-error-container text-on-error-container";
     if (stock <= 10) return "bg-primary-fixed text-on-primary-fixed-variant";
@@ -74,103 +66,90 @@ const InventarioPage = () => {
   const handleSelectItem = (item: Inventario) => {
     setSelected(item);
     setCantidad("");
-    setMotivo("");
     setAdjustType("add");
     setSuccessMsg("");
     setErrorMsg("");
   };
 
-  /*
-    Procesa el formulario de ajuste de stock.
-    - Valida cantidad y reglas según el modo de ajuste.
-    - Si el stock resultante es 0, elimina la variante del inventario.
-    - Si no, actualiza el stock en el backend y refresca la lista.
-  */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selected) return;
 
-  // ═══════════════════════════════════════════════════
-  // VALIDACIONES
-  // ═══════════════════════════════════════════════════
-
-  if (cantidad === "" || Number(cantidad) < 0) {
-    setErrorMsg("Ingresa una cantidad válida.");
-    return;
-  }
-
-  // Validación: restar no puede superar el stock actual
-  if (adjustType === "sub" && Number(cantidad) > selected.stock) {
-    setErrorMsg(
-      `No puedes restar ${cantidad} unidades. El stock actual es de ${selected.stock} unidades.`
-    );
-    return;
-  }
-
-  // Validación: fijar total no puede ser negativo
-  if (adjustType === "fix" && Number(cantidad) < 0) {
-    setErrorMsg("El stock fijado no puede ser negativo.");
-    return;
-  }
-
-  const nuevoStock = calcPreview();
-  setIsSaving(true);
-  setErrorMsg("");
-  setSuccessMsg("");
-
-  try {
-    // ═══════════════════════════════════════════════════
-    // SI EL NUEVO STOCK ES 0 → ELIMINAR DEL INVENTARIO
-    // El producto se conserva en la tabla productos
-    // ═══════════════════════════════════════════════════
-    if (nuevoStock === 0) {
-      await deleteInventario(selected.idInventario);
-
-      setSuccessMsg(
-        `✅ Stock llegó a 0. La variante "${selected.producto.nombre} · ${selected.color.nombreColor} · Talla ${selected.talla.numero}" fue eliminada del inventario.`
-      );
-
-      // Recargar lista y limpiar selección
-      const resp = await getInventario();
-      const data = resp.data ?? [];
-      setInventario(data);
-      setSelected(data.length > 0 ? data[0] : null);
-
-    } else {
-      // ═══════════════════════════════════════════════════
-      // STOCK > 0 → ACTUALIZAR NORMALMENTE
-      // ═══════════════════════════════════════════════════
-      await updateInventario(selected.idInventario, {
-        idProducto: selected.producto.idProducto,
-        idTalla: selected.talla.idTalla,
-        idColor: selected.color.idColor,
-        stock: nuevoStock,
-      });
-
-      setSuccessMsg(`✅ Stock actualizado a ${nuevoStock} unidades.`);
-
-      // Recargar lista y actualizar seleccionado
-      const resp = await getInventario();
-      const data = resp.data ?? [];
-      setInventario(data);
-      const updated = data.find(
-        (i) => i.idInventario === selected.idInventario
-      );
-      if (updated) setSelected(updated);
+    if (cantidad === "" || typeof cantidad !== "number" || Number.isNaN(cantidad)) {
+      setErrorMsg("Ingresa una cantidad válida.");
+      return;
     }
 
-    // Limpiar formulario
-    setCantidad("");
-    setMotivo("");
-    setAdjustType("add");
+    if (cantidad < 0) {
+      setErrorMsg("La cantidad no puede ser negativa.");
+      return;
+    }
 
-  } catch (err) {
-    console.error("Error actualizando stock:", err);
-    setErrorMsg("No se pudo actualizar el stock. Intenta nuevamente.");
-  } finally {
-    setIsSaving(false);
-  }
-};
+    if ((adjustType === "add" || adjustType === "sub") && cantidad === 0) {
+      setErrorMsg("La cantidad debe ser mayor que cero para agregar o restar stock.");
+      return;
+    }
+
+    const request: AjusteStockRequest = {
+      tipo: adjustmentTypeMap[adjustType],
+      cantidad,
+    };
+
+    setIsSaving(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    try {
+      const response = await ajustarStock(selected.idInventario, request);
+
+      if (response.status === 204) {
+        const inventoryResponse = await getInventario();
+        const data = inventoryResponse.data ?? [];
+        setInventario(data);
+        setSelected(data.length > 0 ? data[0] : null);
+        setSuccessMsg("La variante fue eliminada porque quedó sin existencias.");
+      } else if (response.data) {
+        const updatedInventory = response.data;
+        const inventoryResponse = await getInventario();
+        const data = inventoryResponse.data ?? [];
+        setInventario(data);
+        setSelected(
+          data.find((item) => item.idInventario === updatedInventory.idInventario) ??
+            updatedInventory
+        );
+        setSuccessMsg(`Stock actualizado a ${updatedInventory.stock} unidades.`);
+      }
+
+      setCantidad("");
+      setAdjustType("add");
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        const responseData: unknown = error.response?.data;
+        if (error.response?.status === 404) {
+          const inventoryResponse = await getInventario();
+          const data = inventoryResponse.data ?? [];
+          setInventario(data);
+          setSelected(data.length > 0 ? data[0] : null);
+          setErrorMsg("La variante ya no está disponible.");
+        } else if (
+          typeof responseData === "object" &&
+          responseData !== null &&
+          "message" in responseData &&
+          typeof responseData.message === "string"
+        ) {
+          setErrorMsg(responseData.message);
+        } else if (error.response?.status === 400) {
+          setErrorMsg("La operación de ajuste no es válida.");
+        } else {
+          setErrorMsg("No se pudo actualizar el stock. Intenta nuevamente.");
+        }
+      } else {
+        setErrorMsg("No se pudo actualizar el stock. Intenta nuevamente.");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -412,9 +391,7 @@ const InventarioPage = () => {
                         <button
                           type="button"
                           onClick={() =>
-                            setCantidad((prev) =>
-                              Math.max(0, (Number(prev) || 0) + 1)
-                            )
+                            setCantidad((prev) => (Number(prev) || 0) + 1)
                           }
                           className="text-primary hover:bg-primary-fixed p-1 rounded transition-colors"
                         >
@@ -426,7 +403,7 @@ const InventarioPage = () => {
                           type="button"
                           onClick={() =>
                             setCantidad((prev) =>
-                              Math.max(0, (Number(prev) || 0) - 1)
+                              prev === "" || prev === 0 ? 0 : prev - 1
                             )
                           }
                           className="text-primary hover:bg-primary-fixed p-1 rounded transition-colors"
@@ -439,36 +416,6 @@ const InventarioPage = () => {
                     </div>
                   </div>
 
-                  {/* Previsión */}
-                  <div className="w-1/3 bg-tertiary-fixed/30 rounded-2xl p-4 flex flex-col justify-center items-center">
-                    <span className="text-[10px] font-bold text-on-tertiary-fixed-variant uppercase opacity-70 mb-1">
-                      Previsión
-                    </span>
-                    <span
-                      className={`text-2xl font-black ${
-                        calcPreview() <= 3 ? "text-error" : "text-tertiary"
-                      }`}
-                    >
-                      {calcPreview()}
-                    </span>
-                    <span className="text-[10px] text-on-surface-variant mt-1">
-                      unidades
-                    </span>
-                  </div>
-                </div>
-
-                {/* Motivo */}
-                <div>
-                  <label className="text-sm font-bold text-on-surface-variant mb-2 block">
-                    Motivo de Ajuste
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="Ej: Recepción de pedido, Devolución cliente..."
-                    className="w-full py-4 px-6 bg-surface-container-low border-2 border-transparent rounded-2xl focus:border-primary focus:ring-0 text-sm transition-all resize-none outline-none"
-                    value={motivo}
-                    onChange={(e) => setMotivo(e.target.value)}
-                  />
                 </div>
 
                 {/* Mensajes feedback */}

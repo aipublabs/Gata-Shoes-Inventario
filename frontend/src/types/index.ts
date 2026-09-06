@@ -31,6 +31,13 @@ export interface Inventario {
   color: Color;
 }
 
+export type TipoAjusteStock = "AGREGAR" | "RESTAR" | "FIJAR";
+
+export interface AjusteStockRequest {
+  tipo: TipoAjusteStock;
+  cantidad: number;
+}
+
 export interface CategoriaStock {
   nombreCategoria: string;
   stock: number;
