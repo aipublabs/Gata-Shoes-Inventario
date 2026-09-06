@@ -162,7 +162,7 @@ const ResumenPage = () => {
         precio: Number(precio),
         urlImagen: urlImagen.trim() || null,
         idCategoria: Number(idCategoria),
-      } as any);
+      } as unknown as Parameters<typeof createProducto>[0]);
 
       const nuevoProductoId = productoResp.data.idProducto;
 

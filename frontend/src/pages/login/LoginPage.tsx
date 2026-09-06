@@ -53,7 +53,7 @@ const LoginPage = () => {
       */
       await login(correo.trim(), contrasena);
       navigate("/resumen");
-    } catch (loginError) {
+    } catch {
       setError("Credenciales incorrectas. Inténtelo de nuevo.")
     }
   };
