@@ -1,6 +1,7 @@
 package com.gatashoes.inventario.api.security;
 
 import com.gatashoes.inventario.model.Administrador;
+import org.springframework.beans.factory.annotation.Value;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -24,15 +25,18 @@ import java.util.Date;
  * - Access Token: Tiene una duración de 15 minutos
  * - Refresh Token: Tiene una duración de 7 días
  * 
- * Nota: La clave secreta está hardcodeada en la clase. En producción,
- * debe almacenarse en variables de entorno o gestores de secretos seguros.
+ * La clave secreta se obtiene de la configuración externa del ambiente.
  */
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "D3JkoEtWQzBfbFJjeEgwM0Flb1hYSlpZeFFJVW5Ga1E=";
+    private final String secretKey;
     private static final long ACCESS_TOKEN_EXPIRATION = 15 * 60 * 1000L; // 15 minutos
     private static final long REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60 * 1000L; // 7 días
+
+    public JwtService(@Value("${app.jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     /**
      * Genera un access token para un administrador.
@@ -118,7 +122,7 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
