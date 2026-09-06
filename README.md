@@ -1,247 +1,291 @@
-# Evidencia GA7-220501096-AA5-EV04
+# Evidencia GA8-220501096-AA1-EV01
 
-## API del proyecto Gata Shoes
+## Desarrollo de software a partir de la integración de sus módulos componentes
 
 ## 1. Información general
 
-- Evidencia: GA7-220501096-AA5-EV04.
-- Tipo de evidencia: Producto.
-- Nombre: API del Proyecto.
 - Proyecto: Gata Shoes, Sistema de Inventario.
 - Programa: Análisis y Desarrollo de Software.
-- Backend: Spring Boot 3.3.5 y Java 17.
-- Frontend: React y TypeScript.
-- Base de datos: MySQL 8.
-- Herramienta de pruebas: Postman.
-- Seguridad: Spring Security, JWT y BCrypt.
-- Rama: feature/GA7-220501096-AA5-EV04.
+- Fase: Ejecución.
+- Evidencia: GA8-220501096-AA1-EV01.
+- Tipo de evidencia: Desempeño.
+- Rama: `feature/GA8-220501096-AA1-EV01`.
+- Repositorio: https://github.com/aipublabs/Gata-Shoes-Inventario
 
 ## 2. Objetivo
 
-El objetivo fue probar, documentar y presentar las API REST del proyecto Gata Shoes mediante Postman. Las pruebas cubrieron los servicios del backend relacionados con:
+La evidencia busca integrar los módulos de la solución web, validar su funcionamiento conjunto, aplicar buenas prácticas, utilizar control de versiones y comprobar las reglas principales mediante pruebas unitarias.
 
-- autenticación y registro;
-- administradores;
-- categorías;
-- colores;
-- tallas;
-- productos;
-- inventario;
-- ajuste manual de stock;
-- resumen;
-- alertas;
-- limpieza de datos temporales.
+## 3. Arquitectura de la solución
 
-## 3. Alcance
+- Frontend desarrollado con React y TypeScript.
+- Comunicación entre la interfaz y los servicios mediante Axios.
+- Backend desarrollado con Spring Boot y Java 17.
+- Persistencia mediante Spring Data JPA.
+- Base de datos MySQL.
+- Seguridad mediante Spring Security, JWT y BCrypt.
 
-La colección de Postman prueba los servicios REST disponibles en el backend del proyecto Gata Shoes. Para esta evidencia se utilizaron datos temporales, los identificadores se almacenaron en variables dinámicas, las solicitudes se ejecutaron en orden y los datos temporales fueron eliminados al finalizar. La ejecución no modificó permanentemente los registros reales del proyecto.
+Flujo de la solución:
 
-## 4. Criterios de evaluación
+```text
+Interfaz React
+→ comunicación con servicios
+→ API REST Spring Boot
+→ servicios de negocio
+→ repositorios
+→ MySQL
+```
 
-| N.º | Criterio de evaluación | Evidencia de cumplimiento | Estado |
-|---:|---|---|---|
-| 1 | Realiza el test de las API del proyecto utilizando Postman. | Colección ejecutada con 40 solicitudes, 80 pruebas aprobadas, 0 fallidas y 0 errores. | Cumplido |
-| 2 | Realiza el video solicitado mostrando las pruebas de las API del proyecto. | Video con la ejecución del Collection Runner y explicación de los resultados. | Cumplido |
-| 3 | Realiza la documentación de las API del proyecto. | Documento con descripción de pruebas, resultados y pantallazos. | Cumplido |
-| 4 | Entrega los endpoints de las API del proyecto desarrolladas. | Archivo ENDPOINTS_AA5_EV04.txt con los 35 endpoints documentados. | Cumplido |
+## 4. Módulos integrados
 
-## 5. Colección de Postman
+| Módulo | Funciones principales | Frontend | Backend | Estado |
+|---|---|---|---|---|
+| Autenticación | Inicio de sesión y control de sesión | Pantalla de login y contexto de autenticación | AuthService, JWT y endpoints de autenticación | Integrado |
+| Administradores | Registro, consulta y eliminación | No hay pantalla dedicada identificada | AdministradorService y AdministradorRepository | Disponible mediante servicios backend |
+| Resumen | Indicadores, novedades y mayor stock | Pantalla de resumen | ResumenService e InventarioRepository | Integrado |
+| Categorías | Listar, crear, actualizar y eliminar | Pantalla de categorías | CategoriaService y CategoriaRepository | Integrado |
+| Colores | CRUD de colores | Funciones Axios para consultas y CRUD; no hay pantalla dedicada | ColorService y ColorRepository | Disponible mediante servicios backend |
+| Tallas | CRUD de tallas | Funciones Axios para consultas y CRUD; no hay pantalla dedicada | TallaService y TallaRepository | Disponible mediante servicios backend |
+| Productos | Crear producto y operaciones CRUD | Creación desde el resumen; no hay pantalla CRUD dedicada | ProductoService y ProductoRepository | Parcialmente integrado |
+| Inventario | Consultar y registrar variantes | Pantalla de inventario y modal de creación | InventarioService e InventarioRepository | Integrado |
+| Ajuste manual de stock | Agregar, restar y fijar existencias | Formulario de inventario | Endpoint especializado y regla de negocio en InventarioService | Integrado |
+| Alertas | Consultar stock bajo | Pantalla de alertas | ResumenRestController e InventarioService | Integrado |
 
-La colección utilizada para esta evidencia se denomina:
+## 5. Integración del ajuste manual de stock
 
-GA7-220501096-AA5-EV04 - API del Proyecto Gata Shoes
+Durante EV01 se integró la pantalla React de inventario con:
 
-La colección contiene 40 solicitudes organizadas en nueve carpetas:
-
-1. 01 - Autenticación y registro: 3 solicitudes.
-2. 02 - Administradores: 2 solicitudes.
-3. 03 - Categorías: 4 solicitudes.
-4. 04 - Colores: 4 solicitudes.
-5. 05 - Tallas: 4 solicitudes.
-6. 06 - Productos: 4 solicitudes.
-7. 07 - Inventario y ajuste de stock: 10 solicitudes.
-8. 08 - Resumen y alertas: 2 solicitudes.
-9. 09 - Limpieza de datos temporales: 7 solicitudes.
-
-La colección utiliza:
-
-- scripts Pre-request;
-- scripts Post-response;
-- variables dinámicas;
-- autenticación Bearer Token;
-- encadenamiento de solicitudes;
-- validaciones automáticas;
-- limpieza de datos temporales.
-
-## 6. Variables de la colección
-
-| Variable | Propósito |
-|---|---|
-| baseUrl | URL base de la API. |
-| marcaTiempoEV04 | Identificador dinámico de la ejecución. |
-| correoAdminEV04 | Correo temporal del administrador. |
-| contrasenaAdminEV04 | Contraseña temporal de pruebas. |
-| accessTokenEV04 | Token utilizado por las solicitudes protegidas. |
-| idAdminEV04 | Identificador del administrador temporal. |
-| nombreCategoriaEV04 | Nombre dinámico de categoría. |
-| idCategoriaEV04 | Identificador de categoría. |
-| nombreColorEV04 | Nombre dinámico del color. |
-| idColorEV04 | Identificador del color. |
-| numeroTallaEV04 | Número dinámico de talla. |
-| idTallaEV04 | Identificador de talla. |
-| nombreProductoEV04 | Nombre dinámico del producto. |
-| idProductoEV04 | Identificador del producto. |
-| idInventarioEV04 | Identificador del inventario. |
-
-Los valores sensibles no deben mostrarse en el README, el documento ni el video.
-
-## 7. Módulos probados
-
-| Módulo | Cantidad de solicitudes | Operaciones principales | Seguridad |
-|---|---:|---|---|
-| Autenticación y registro | 3 | Registro, login y rechazo de credenciales incorrectas | Endpoints públicos |
-| Administradores | 2 | Listar y consultar administrador temporal | Protegidos por JWT |
-| Categorías | 4 | Crear, consultar, actualizar y listar | Protegidas por JWT |
-| Colores | 4 | Crear, consultar, actualizar y listar | Protegidos por JWT |
-| Tallas | 4 | Crear, consultar, actualizar y listar | Protegidas por JWT |
-| Productos | 4 | Crear, consultar, actualizar y listar | Protegidos por JWT |
-| Inventario y stock | 10 | Crear, consultar, listar, actualizar, agregar stock, restar stock, fijar stock y validar operaciones inválidas | Protegido por JWT |
-| Resumen y alertas | 2 | Consultar métricas y alertas | Protegidos por JWT |
-| Limpieza | 7 | Eliminar datos temporales y limpiar variables | Protegida por JWT |
-
-## 8. Resultados de la ejecución
-
-La ejecución se realizó con Collection Runner y se registraron los siguientes resultados:
-
-- Fuente: Collection Runner.
-- Iteraciones: 1.
-- Solicitudes ejecutadas: 40.
-- Pruebas ejecutadas: 80.
-- Pruebas aprobadas: 80.
-- Pruebas fallidas: 0.
-- Solicitudes omitidas: 0.
-- Errores: 0.
-- Duración de la ejecución validada: 4 segundos y 726 milisegundos.
-- Tiempo promedio de respuesta: 32 milisegundos.
-
-Los códigos HTTP 400, 401, 404 y 409 mostrados en algunos casos corresponden a resultados esperados de pruebas negativas y no representan fallos de la colección.
-
-Para la grabación del video se utilizó un delay en Collection Runner para facilitar la visualización del avance.
-
-## 9. Pruebas del ajuste manual de stock
-
-El endpoint probado fue:
-
+```text
 PATCH /api/v1/inventario/{id}/stock
+```
 
-Las operaciones documentadas fueron:
+La integración soporta:
 
-- AGREGAR.
-- RESTAR.
-- FIJAR.
+- `AGREGAR`.
+- `RESTAR`.
+- `FIJAR`.
+- El frontend envía el tipo de ajuste y la cantidad.
+- El backend calcula el resultado.
+- El backend impide stock negativo.
+- `AGREGAR` y `RESTAR` requieren una cantidad mayor que cero.
+- `FIJAR` permite una cantidad igual a cero.
+- Una variante se elimina cuando el stock llega a cero.
+- Se agregó `PATCH` a los métodos permitidos por CORS.
+- Se eliminó de la pantalla el campo `motivo` porque no era almacenado por el sistema.
+- Se eliminó el cálculo local utilizado como fuente principal del stock.
 
-Las validaciones comprobadas fueron:
+## 6. Validaciones funcionales realizadas
 
-- HTTP 200 cuando el stock resultante es mayor que cero.
-- HTTP 204 cuando el stock llega a cero y la variante se elimina.
-- HTTP 400 cuando se intenta obtener stock negativo.
-- HTTP 400 cuando AGREGAR o RESTAR recibe cantidad cero.
-- HTTP 400 para un tipo de ajuste no válido.
-- HTTP 404 cuando el inventario no existe.
+1. `FIJAR` actualizó el inventario 3 de stock 5 a stock 9.
+2. MySQL confirmó el stock 9.
+3. `FIJAR` restauró el inventario 3 de stock 9 a stock 5.
+4. MySQL confirmó la restauración a stock 5.
+5. `AGREGAR` cambió el stock de 5 a 7.
+6. `RESTAR` cambió el stock de 7 a 5.
+7. MySQL confirmó nuevamente el stock 5.
+8. `AGREGAR` con cantidad cero fue rechazado.
+9. `RESTAR` una cantidad superior al stock fue rechazado.
+10. Después de ambos rechazos, el stock se conservó en 5.
+11. Se creó una variante temporal con identificador 32 y stock 1.
+12. `FIJAR` la variante temporal en cero eliminó el registro.
+13. La consulta posterior confirmó que la variante temporal ya no existía.
 
-Estas reglas se centralizan en el backend para garantizar la integridad del inventario.
+El inventario real 3 quedó restaurado en stock 5. La variante temporal 32 fue eliminada y no quedaron datos temporales de esa validación.
 
-## 10. Limpieza de los datos temporales
+## 7. Pruebas unitarias
 
-La colección elimina los datos en orden inverso a su creación:
+Las pruebas unitarias verifican servicios y reglas específicas sin iniciar toda la aplicación ni conectarse a MySQL.
 
-1. Inventario.
-2. Producto.
-3. Talla.
-4. Color.
-5. Categoría.
-6. Administrador.
+| Clase | Pruebas |
+|---|---:|
+| `InventarioServiceTest` | 24 |
+| `AdministradorServiceTest` | 14 |
+| `AuthServiceTest` | 8 |
+| `CategoriaServiceTest` | 10 |
+| `ColorServiceTest` | 10 |
+| `ProductoServiceTest` | 10 |
+| `ResumenServiceTest` | 7 |
+| `JwtServiceTest` | 7 |
+| `TallaServiceTest` | 10 |
 
-Se aclara que:
+Resultado consolidado:
 
-- el inventario se elimina mediante FIJAR con cantidad cero;
-- se verifica posteriormente que el inventario no exista;
-- las variables temporales se limpian al finalizar;
-- los registros reales del proyecto no son eliminados.
+- Pruebas ejecutadas: 100.
+- Pruebas aprobadas: 100.
+- Pruebas fallidas: 0.
+- Errores: 0.
+- Pruebas omitidas: 0.
+- Resultado: `BUILD SUCCESS`.
 
-## 11. Endpoints documentados
+Se utilizaron JUnit 5, Mockito y AssertJ. Los repositorios fueron simulados. No se utilizó MySQL, no se modificaron datos reales, no se realizaron solicitudes HTTP y no se inició Spring Boot para las pruebas unitarias. `InventarioApplicationTests` no se incluyó en la ejecución focalizada de las 100 pruebas.
 
-El archivo:
+## 8. Cobertura funcional de las pruebas
 
-ENDPOINTS_AA5_EV04.txt
+| Servicio | Funciones verificadas |
+|---|---|
+| `InventarioService` | Consultas, guardado y actualización, eliminación, alertas, novedades, mayor stock, `AGREGAR`, `RESTAR`, `FIJAR`, cantidades inválidas, stock negativo y eliminación al llegar a cero. |
+| `AdministradorService` | Consultas, registro, normalización, protección de contraseña, correo duplicado y eliminación. |
+| `AuthService` | Credenciales válidas e inválidas, contraseñas protegidas, migración de contraseñas sin protección y mensaje general de acceso inválido. |
+| `CategoriaService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
+| `ColorService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
+| `TallaService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
+| `ProductoService` | Listado, consulta, guardado, actualización, eliminación y recursos inexistentes. |
+| `ResumenService` | Total de variantes, stock total, alertas, distribución por categoría, novedades, mayor stock e inventario vacío. |
+| `JwtService` | Generación de tokens, extracción de correo, validación y rechazo de tokens malformados o alterados. |
 
-documenta 35 endpoints distribuidos así:
+## 9. Buenas prácticas aplicadas
 
-- Autenticación y registro: 4.
-- Administradores: 3.
-- Categorías: 5.
-- Colores: 5.
-- Tallas: 5.
-- Productos: 5.
-- Inventario: 6.
-- Resumen y alertas: 2.
+- Separación por capas.
+- Uso de DTO.
+- Uso de servicios.
+- Uso de repositorios.
+- Validaciones centralizadas en el backend.
+- Tipos definidos en TypeScript.
+- Eliminación del uso de tipos genéricos que reducían la seguridad del código.
+- Eliminación de variables sin utilizar.
+- Revisión automática de calidad del código frontend finalizada sin errores.
+- Manejo funcional de errores.
+- Pruebas independientes.
+- Repositorios simulados.
+- Ausencia de datos reales en las pruebas.
+- Commits separados por propósito.
 
-Total: 35 endpoints.
+## 10. Compilación y empaquetado
 
-Para cada endpoint se documentan:
+### Frontend
 
-- método HTTP;
-- ruta;
-- propósito;
-- seguridad;
-- DTO de entrada;
-- DTO de salida;
-- códigos HTTP;
-- validaciones principales.
+- TypeScript compiló correctamente.
+- Vite generó la distribución de producción.
+- Resultado exitoso.
 
-## 12. Evidencias generadas
+### Backend
 
-La entrega de esta evidencia incluye:
+- Java 17.
+- Maven compiló correctamente.
+- Las 100 pruebas fueron ejecutadas durante el empaquetado.
+- Resultado: `BUILD SUCCESS`.
+- Archivo generado: `inventario-0.0.1-SNAPSHOT.jar`.
+- Tamaño verificado: `54494035` bytes.
 
-- Código fuente del proyecto.
-- Documento de pruebas con pantallazos.
-- Video mostrando la ejecución.
-- Colección Postman exportada.
-- Archivo con todos los endpoints.
-- Archivo con el enlace de la rama.
-- README específico de EV04.
+La advertencia de API obsoleta en `JwtService` no impidió la compilación.
 
-Los archivos documentados son:
+## 11. Ambiente de desarrollo y pruebas
 
-- GA7-220501096-AA5-EV04.postman_collection.json
-- ENDPOINTS_AA5_EV04.txt
-- ENLACE_REPOSITORIO_AA5_EV04.txt
-- README.md
+| Componente | Uso |
+|---|---|
+| Windows | Sistema operativo de desarrollo |
+| Visual Studio Code | IDE de desarrollo |
+| Java 17 | Lenguaje del backend |
+| Spring Boot 3.3.5 | Framework del backend |
+| Maven Wrapper | Construcción, pruebas y empaquetado |
+| React | Interfaz frontend |
+| TypeScript | Tipado del frontend |
+| Vite | Desarrollo y construcción frontend |
+| Node.js y npm | Dependencias y scripts frontend |
+| MySQL | Persistencia de datos |
+| Git | Control de versiones |
+| GitHub | Repositorio remoto |
+| Navegador web | Ejecución y validación funcional del frontend |
 
-## 13. Versionamiento
+Puertos comprobados:
 
-- Sistema de control: Git.
+- Frontend: `5173`.
+- Backend: `8081`.
+
+## 12. Ejecución del proyecto
+
+Configurar MySQL con la base de datos del proyecto y definir la contraseña mediante una variable de entorno segura. No almacenar credenciales directamente en la documentación ni en el repositorio.
+
+Iniciar el backend desde la carpeta del proyecto Java:
+
+```powershell
+.\inventario\mvnw.cmd -f .\inventario\pom.xml spring-boot:run
+```
+
+Instalar las dependencias del frontend e iniciar Vite:
+
+```powershell
+Set-Location .\frontend
+npm install
+npm run dev
+```
+
+Acceder desde el navegador a:
+
+```text
+http://localhost:5173
+```
+
+## 13. Ejecución de las pruebas
+
+Ejecutar las nueve clases unitarias:
+
+```powershell
+.\inventario\mvnw.cmd -f .\inventario\pom.xml "-Dtest=InventarioServiceTest,AdministradorServiceTest,AuthServiceTest,CategoriaServiceTest,ProductoServiceTest,ResumenServiceTest,JwtServiceTest,ColorServiceTest,TallaServiceTest" test
+```
+
+Ejecutar la revisión automática de calidad del frontend:
+
+```powershell
+npm --prefix frontend run lint
+```
+
+Compilar el frontend:
+
+```powershell
+npm run build
+```
+
+Empaquetar el backend:
+
+```powershell
+.\inventario\mvnw.cmd -f .\inventario\pom.xml package
+```
+
+## 14. Control de versiones
+
+- Rama: `feature/GA8-220501096-AA1-EV01`.
 - Repositorio remoto: GitHub.
-- Rama de la evidencia: feature/GA7-220501096-AA5-EV04.
+
+Commits de la evidencia:
+
+- `cf82654`: integrar ajuste de stock entre frontend y backend.
+- `ea496b7`: corregir errores de calidad del código frontend.
+- `444fe96`: agregar pruebas unitarias del servicio de inventario.
+- `c4d9e58`: agregar pruebas unitarias del servicio de administradores.
+- `adc6592`: completar pruebas unitarias de los servicios principales.
+- `97b1697`: estabilizar validación de token JWT alterado.
 
 Enlace de la rama:
 
-[Rama feature/GA7-220501096-AA5-EV04](https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA7-220501096-AA5-EV04)
+[feature/GA8-220501096-AA1-EV01](https://github.com/aipublabs/Gata-Shoes-Inventario/tree/feature/GA8-220501096-AA1-EV01)
 
-## 14. Consideraciones de seguridad
+## 15. Cumplimiento de los criterios de evaluación
 
-Durante la ejecución de la colección se aplicaron las siguientes medidas:
+| Criterio | Evidencia de cumplimiento | Estado |
+|---|---|---|
+| 1. Codifica los módulos de acuerdo con los requerimientos del sistema en el lenguaje seleccionado. | Módulos React, API REST Spring Boot, servicios, repositorios e integración del ajuste de stock. | Cumplido |
+| 2. Aplica buenas prácticas de codificación. | Separación por capas, DTO, validaciones backend, tipos TypeScript y pruebas aisladas. | Cumplido |
+| 3. Maneja de manera adecuada el IDE de desarrollo. | Desarrollo y organización del proyecto en Visual Studio Code. | Cumplido |
+| 4. Aplica el control de versiones del código escrito. | Rama de evidencia y commits separados por propósito en Git y GitHub. | Cumplido |
+| 5. Aplica pruebas unitarias. | 100 pruebas unitarias ejecutadas con 100 aprobadas, 0 fallidas y 0 errores. | Cumplido |
+
+## 16. Consideraciones de seguridad
 
 - No publicar contraseñas reales.
-- No mostrar tokens JWT completos.
-- No mostrar hashes.
-- Proteger las variables temporales y credenciales.
-- Usar JWT para las solicitudes protegidas.
-- Eliminar los administradores y datos temporales.
-- No modificar registros reales.
-- No incluir secretos en el repositorio.
-- No mostrar credenciales en pantallazos o video.
+- No publicar tokens completos.
+- No publicar claves JWT.
+- No publicar hashes.
+- Utilizar variables de entorno.
+- Proteger las contraseñas.
+- Limitar el acceso a las funciones administrativas.
+- No usar datos reales en las pruebas unitarias.
+- No incluir secretos en la documentación.
 
-## 15. Conclusiones
+## 17. Conclusiones
 
-Las API del proyecto fueron probadas mediante Postman y la colección ejecutó 40 solicitudes. Las 80 pruebas finalizaron correctamente, sin fallos ni errores. Se comprobaron tanto respuestas válidas como inválidas, se validó la seguridad JWT y se probaron las operaciones CRUD del proyecto. También se validó el ajuste manual de stock y se documentaron los 35 endpoints. Los datos temporales fueron eliminados al terminar la ejecución y los cuatro criterios de evaluación quedaron cubiertos.
+Los módulos principales trabajan de forma integrada. React se comunica con Spring Boot y Spring Boot administra la información en MySQL. El ajuste de stock quedó centralizado en el backend, con validaciones para las operaciones `AGREGAR`, `RESTAR` y `FIJAR`.
+
+Las validaciones funcionales fueron aprobadas. Las 100 pruebas unitarias fueron aprobadas. El frontend y el backend compilaron correctamente, y el backend fue empaquetado correctamente en `inventario-0.0.1-SNAPSHOT.jar`.
+
+El trabajo fue versionado mediante Git y GitHub. Con la evidencia disponible, los criterios de EV01 quedaron cubiertos.
