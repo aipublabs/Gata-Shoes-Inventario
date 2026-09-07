@@ -16,7 +16,7 @@ import type {
   y de manejar de forma automática los encabezados comunes y el estado de sesión.
 */
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8081/api/v1",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8081/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
@@ -30,9 +30,6 @@ const axiosClient = axios.create({
 */
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-  // Debug logs to verify token presence and request URL
-  console.log('[Axios] Token enviado:', token ? 'SÍ' : 'NO');
-  console.log('[Axios] Request a:', config.url);
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
