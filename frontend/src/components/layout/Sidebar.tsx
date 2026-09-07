@@ -5,6 +5,7 @@ const navItems = [
   { label: "Panel de Control", path: "/resumen", icon: "dashboard" },
   { label: "Inventario", path: "/inventario", icon: "inventory_2" },
   { label: "Categorías", path: "/categorias", icon: "category" },
+  { label: "Colores", path: "/colores", icon: "palette" },
   { label: "Alertas Stock", path: "/alertas", icon: "warning", iconClass: "text-red-400" },
 ];
 
