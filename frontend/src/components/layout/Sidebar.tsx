@@ -6,6 +6,7 @@ const navItems = [
   { label: "Inventario", path: "/inventario", icon: "inventory_2" },
   { label: "Categorías", path: "/categorias", icon: "category" },
   { label: "Colores", path: "/colores", icon: "palette" },
+  { label: "Tallas", path: "/tallas", icon: "straighten" },
   { label: "Alertas Stock", path: "/alertas", icon: "warning", iconClass: "text-red-400" },
 ];
 
