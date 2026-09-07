@@ -4,6 +4,7 @@ import type {
   Color,
   Talla,
   Producto,
+  ProductoRequest,
   Inventario,
   AjusteStockRequest,
   InventarioResumen,
@@ -145,10 +146,10 @@ export const getProductos = () => axiosClient.get<Producto[]>("/productos");
 /*
   Crea un producto nuevo sin el id, que luego se asociará a inventario.
 */
-export const createProducto = (data: Omit<Producto, "idProducto">) =>
+export const createProducto = (data: ProductoRequest) =>
   axiosClient.post<Producto>("/productos", data);
 
-export const updateProducto = (id: number, data: Partial<Producto>) =>
+export const updateProducto = (id: number, data: ProductoRequest) =>
   axiosClient.put<Producto>(`/productos/${id}`, data);
 export const deleteProducto = (id: number) => axiosClient.delete(`/productos/${id}`);
 

@@ -23,6 +23,14 @@ export interface Producto {
   categoria: Categoria | null;
 }
 
+export interface ProductoRequest {
+  nombre: string;
+  descripcion: string | null;
+  precio: number;
+  urlImagen: string | null;
+  idCategoria: number;
+}
+
 export interface Inventario {
   idInventario: number;
   stock: number;

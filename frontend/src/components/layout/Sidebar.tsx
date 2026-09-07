@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 const navItems = [
   { label: "Panel de Control", path: "/resumen", icon: "dashboard" },
   { label: "Inventario", path: "/inventario", icon: "inventory_2" },
+  { label: "Productos", path: "/productos", icon: "shopping_bag" },
   { label: "Categorías", path: "/categorias", icon: "category" },
   { label: "Colores", path: "/colores", icon: "palette" },
   { label: "Tallas", path: "/tallas", icon: "straighten" },

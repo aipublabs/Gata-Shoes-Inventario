@@ -11,7 +11,7 @@ import {
   getTallas,
   getColores,
 } from "../../api/axiosClient";
-import type { InventarioResumen, Inventario, Talla, Color } from "../../types";
+import type { InventarioResumen, Inventario, Talla, Color, ProductoRequest } from "../../types";
 
 const ResumenPage = () => {
   // Componente principal del dashboard que muestra KPIs, novedades y top stock.
@@ -156,13 +156,14 @@ const ResumenPage = () => {
     setIsSaving(true);
     try {
       // Paso 1 — Crear el producto
-      const productoResp = await createProducto({
+      const productoRequest: ProductoRequest = {
         nombre: nombre.trim(),
         descripcion: descripcion.trim() || null,
         precio: Number(precio),
         urlImagen: urlImagen.trim() || null,
         idCategoria: Number(idCategoria),
-      } as unknown as Parameters<typeof createProducto>[0]);
+      };
+      const productoResp = await createProducto(productoRequest);
 
       const nuevoProductoId = productoResp.data.idProducto;
 
